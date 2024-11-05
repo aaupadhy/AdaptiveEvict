@@ -5,7 +5,17 @@ Key Points:
 <ul>
   <li>Contains two models: GPT and LLAMA.</li>
   <li> GPT model here is a base simple decoder-only Transformer.</li>
-  <li> LLAMA contains advanced concepts like Rotaional Positional Encoding (RoPe) </li>
+  <li> LLAMA contains advanced concepts like Rotaional Positional Encoding (RoPe), Mixture of Experts, etc. (Refer below.) </li>
   <li> These models are scaled-down versions of their Original architecture. </li>
 </ul>  
 
+Status of functionalities added to LLAMA:
+- [x] ByTe-Pair Tokenization
+- [x] Temperature, Top-p and Top-k 
+- [x] Mixture of Experts
+- [x] KV Cache
+- [ ] Grouped Query Attention
+- [ ] Infini Attention
+- [ ] 
+- [ ] 
+- [ ] 
