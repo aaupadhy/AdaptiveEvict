@@ -29,3 +29,6 @@ python main.py --network_type llama
  
 - The network can be selected between llama and gpt.
 - The program will download the poem dataset to a text file (default name: "data.txt"). To use a custom dataset, replace the content or provide a different text file.
+
+
+## Arguments
