@@ -10,8 +10,8 @@ Key Points:
 </ul>  
 
 Status of functionalities added to LLAMA:
-- [x] ByTe-Pair Tokenization
-- [x] Temperature, Top-p and Top-k 
+- :white_check_mark: ByTe-Pair Tokenization
+- :heavy_check_mark: Temperature, Top-p and Top-k 
 - [x] Mixture of Experts
 - [x] KV Cache
 - [ ] Grouped Query Attention
@@ -19,3 +19,6 @@ Status of functionalities added to LLAMA:
 - [ ] 
 - [ ] 
 - [ ] 
+
+
+ / 
