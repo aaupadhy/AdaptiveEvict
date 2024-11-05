@@ -9,11 +9,11 @@ Key Points:
   <li> These models are scaled-down versions of their Original architecture. </li>
 </ul>  
 
-Status of functionalities added to LLAMA:
-:white_check_mark: ByTe-Pair Tokenization
-:white_check_mark: Temperature, Top-p and Top-k 
-white_check_mark Mixture of Experts
-- [] KV Cache
-- [ ] Grouped Query Attention
-- [ ] Infini Attention
+Status of functionalities added to LLAMA: <br>
+:white_check_mark: ByTe-Pair Tokenization <br>
+:white_check_mark: Temperature, Top-p and Top-k <br>
+:white_check_mark: Mixture of Experts <br>
+:white_square_button: KV Cache <br>
+:white_square_button: Grouped Query Attention <br>
+:white_square_button: Infini Attention
 
