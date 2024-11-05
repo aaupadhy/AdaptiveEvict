@@ -14,8 +14,8 @@
 :white_check_mark: Temperature, Top-p and Top-k <br>
 :white_check_mark: RMSNorm <br>
 :white_check_mark: Rotational Positional Encoding (RoPe) <br>
+:white_check_mark: KV Cache <br>
 :white_check_mark: Mixture of Experts <br>
-:white_square_button: KV Cache <br>
 :white_square_button: Grouped Query Attention <br>
 :white_square_button: Infini Attention
 
