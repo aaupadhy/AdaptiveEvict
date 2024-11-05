@@ -12,7 +12,8 @@
 ## Status of functionalities (Added to LLAMA):
 :white_check_mark: ByTe-Pair Tokenization <br>
 :white_check_mark: Temperature, Top-p and Top-k <br>
-:white_check_mark: Rotaional Positional Encoding (RoPe) <br>
+:white_check_mark: RMSNorm <br>
+:white_check_mark: Rotational Positional Encoding (RoPe) <br>
 :white_check_mark: Mixture of Experts <br>
 :white_square_button: KV Cache <br>
 :white_square_button: Grouped Query Attention <br>
