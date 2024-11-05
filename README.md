@@ -9,7 +9,7 @@
   <li> These models are scaled-down versions of their original architectures. </li>
 </ul>  
 
-## Status of functionalities (Added to LLAMA model):
+## Status of functionalities (Added to LLAMA):
 :white_check_mark: ByTe-Pair Tokenization <br>
 :white_check_mark: Temperature, Top-p and Top-k <br>
 :white_check_mark: Rotaional Positional Encoding (RoPe) <br>
@@ -20,3 +20,11 @@
 
 Feel free to comment if you want anything integrated here.
 
+
+## Run command: <br>
+
+```
+python main.py --network_type llama
+```
+
+The program will download poems as the dataset to a text file (default name: "data.txt"). To use a custom dataset, replace the file with a different text file.
