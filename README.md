@@ -7,7 +7,7 @@
   <li> GPT model serves as the base simple decoder-only transformer and is easier to learn.</li>
   <li> LLAMA contains advanced concepts like Rotaional Positional Encoding (RoPe), SwishGLU, RMSNorm, Mixture of Experts, etc. (Refer below.) </li>
   <li> These models are scaled-down versions of their original architectures. </li>
-  <li> Download the Taylor Swift song lyrics dataset by default for training. (Can be replaced)</li>
+  <li> Downloads the Taylor Swift song lyrics dataset by default for training. </li>
 </ul>  
 
 ## Status of functionalities (Added to LLAMA):
