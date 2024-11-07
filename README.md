@@ -11,7 +11,7 @@
 </ul>  
 
 ## Implementation Status (Added to LLAMA):
-:white_check_mark: ByTe-Pair Tokenization <br> <a href="tokenizer.py">[Here]</a>  
+:white_check_mark: ByTe-Pair Tokenization <a href="tokenizer.py">[Here]</a>   <br>
 :white_check_mark: Temperature, Top-p and Top-k   <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/solver.py#L131">[Here]</a>   <br> 
 :white_check_mark: RMSNorm      <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L232">[Here]</a>  
 :white_check_mark: SWiGLU      <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L257">[Here]</a>  
