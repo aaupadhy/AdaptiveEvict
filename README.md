@@ -10,7 +10,7 @@
   <li> Downloads the Taylor Swift song lyrics dataset by default for training. </li>
 </ul>  
 
-## Status of functionalities (Added to LLAMA):
+## Implementation Status (Added to LLAMA):
 :white_check_mark: ByTe-Pair Tokenization <br>
 :white_check_mark: Temperature, Top-p and Top-k <br>
 :white_check_mark: RMSNorm <br>
