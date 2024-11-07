@@ -13,8 +13,9 @@ def main(args):
     if not args.test_only:
         solver.train()                                                                  # Training function
     else:
-        solver.generate_text(n_tokens_to_generate=args.gen_tokens_len,                  # Custom generating function
-                             input_text=args.input_text)  
+        solver.generate_text(input_text=args.input_text,                                # Custom generating function
+                             n_tokens_to_generate=args.gen_tokens_len,
+                             kv_cache=True)  
 
 # Print arguments
 def print_args(args):

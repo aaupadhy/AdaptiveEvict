@@ -147,8 +147,8 @@ class MultiHeadSelfAttentionWithRope(nn.Module):
     def reset_cache(self):
         self.cache = {'k': None, 'v': None}
 
-    def forward(self, x, token_loc=None):
-        if self.training:                                                                       # Training mode is normal. Inference mode uses KV cache
+    def forward(self, x, token_loc=None, kv_cache=False):
+        if self.training or not (kv_cache):                                                     # Training mode is normal. Inference mode uses KV cache if kv_cache is set to True
             b, s, e = x.shape                                                                   # Note: In case of self-attention Q, K and V are all equal to S
 
             xq = self.queries(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim)     # B, Q, E      -->  B, Q, (H*HE)  -->  B, Q, H, HE
@@ -335,13 +335,13 @@ class MoeFF(nn.Module):
         self.gate      = nn.Linear(embed_dim, n_experts)
         self.experts   = nn.ModuleList([FF(embed_dim, forward_mul) for _ in range(n_experts)])
 
-    def forward(self, x):
+    def forward(self, x, kv_cache):
         x_gate = F.softmax(self.gate(x), -1)                                                                # B, S, E     -->  B, S, G
         experts_weight, selected_experts = torch.topk(x_gate, self.n_top_experts, dim=-1)                   # B, S, G     -->  B, S, TG  ,   B, S, TG
         experts_weight = experts_weight/experts_weight.sum(-1, keepdims=True)                               # B, S, TG    -->  B, S, TG
         experts_weight = experts_weight.unsqueeze(-1)                                                       # B, S, TG    -->  B, S, TG, 1
          
-        if self.training:    
+        if self.training or (not kv_cache):    
             x = torch.stack([self.experts[i](x) for i in range(len(self.experts))])                         # G, B, S, E
             x = x.permute(1, 2, 0, 3)                                                                       # G, B, S, E  --> B, S, G, E
 
@@ -362,11 +362,14 @@ class Encoder(nn.Module):
     Class for creating an encoder layer
 
     Parameters:
-        embed_dim (int)      : Embedding dimension
-        n_heads (int)        : Number of attention heads to use for performing MultiHeadAttention
-        forward_mul (float)  : Used to calculate dimension of the hidden fc layer = embed_dim * forward_mul
-        max_seq_len (int)    : Maximum sequence length used for training. This creates causal attention mask in self-attention layer (att_mask)
-        dropout (float)      : Dropout parameter
+        embed_dim     (int)    : Embedding dimension
+        n_heads       (int)    : Number of attention heads to use for performing MultiHeadAttention
+        forward_mul   (float)  : Used to calculate dimension of the hidden fc layer = embed_dim * forward_mul
+        max_seq_len   (int)    : Maximum sequence length used for training. This creates causal attention mask in self-attention layer (att_mask)
+        n_experts     (int)    : Number of experts to create
+        n_top_experts (int)    : Number of experts to select
+        kv_cache      (bool)   : Whether to use KV Cache during inference
+        dropout       (float)  : Dropout parameter
     
     Input:
         x (tensor): Tensor of shape B, S, E
@@ -375,7 +378,7 @@ class Encoder(nn.Module):
         Tensor: Output of the encoder block of shape B, S, E
     """ 
 
-    def __init__(self, embed_dim, n_heads, forward_mul, max_seq_len, n_expert, n_top_experts, dropout):
+    def __init__(self, embed_dim, n_heads, forward_mul, max_seq_len, n_expert, n_top_experts, kv_cache, dropout):
         super().__init__()
         self.norm1      = RMSNorm(embed_dim)
         self.attention  = MultiHeadSelfAttentionWithRope(embed_dim, n_heads, max_seq_len)
@@ -385,9 +388,9 @@ class Encoder(nn.Module):
         self.moe_ff     = MoeFF(n_expert, n_top_experts, embed_dim, forward_mul, dropout)
         self.dropout2   = nn.Dropout(dropout)
 
-    def forward(self, x, token_loc=None):
-        x = x + self.dropout1(self.attention(self.norm1(x), token_loc))                     # Skip connections
-        x = x + self.dropout2(self.moe_ff(self.norm2(x)))                                   # Skip connections
+    def forward(self, x, token_loc=None, kv_cache=False):
+        x = x + self.dropout1(self.attention(self.norm1(x), token_loc, kv_cache))                                 # Skip connections
+        x = x + self.dropout2(self.moe_ff(self.norm2(x), kv_cache))                                               # Skip connections
         return x
 
 
@@ -420,13 +423,16 @@ class LLAMA(nn.Module):
     LLAMA Class.
 
     Parameters:
-        vocab size  (int)      : Number of unique tokens
-        embed_dim   (int)      : Embedding dimension
-        max_seq_len (int)      : Maximum sequence length used for training.        
-        n_layers    (int)      : Number of encoder blocks to use
-        n_heads     (int)      : Number of attention heads to use for performing MultiHeadAttention
-        forward_mul (float)    : Used to calculate dimension of the hidden fc layer = embed_dim * forward_mul
-        dropout     (float)    : dropout value
+        vocab size    (int)    : Number of unique tokens
+        embed_dim     (int)    : Embedding dimension
+        max_seq_len   (int)    : Maximum sequence length used for training.        
+        n_layers      (int)    : Number of encoder blocks to use
+        n_heads       (int)    : Number of attention heads to use for performing MultiHeadAttention
+        forward_mul   (float)  : Used to calculate dimension of the hidden fc layer = embed_dim * forward_mul
+        n_experts     (int)    : Number of experts to create
+        n_top_experts (int)    : Number of experts to select
+        kv_cache      (bool)   : Whether to use KV Cache during inference
+        dropout       (float)  : dropout value
     
     Input:
         x (tensor): Long Tensor of shape B, S containing token indices 
@@ -435,34 +441,34 @@ class LLAMA(nn.Module):
         Tensor: Logits of shape B, S, T
     """    
 
-    def __init__(self, vocab_size, embed_dim, max_seq_len, n_layers, n_heads, forward_mul, n_experts=4, n_top_experts=1, dropout=0.1):
+    def __init__(self, vocab_size, embed_dim, max_seq_len, n_layers, n_heads, forward_mul, n_experts=4, n_top_experts=1, kv_cache=True, dropout=0.1):
         super().__init__()
         self.max_seq_len   = max_seq_len
 
         self.embedding     = TokenEmbedding(vocab_size, embed_dim)
-        self.encoder       = nn.ModuleList([Encoder(embed_dim, n_heads, forward_mul, max_seq_len, n_experts, n_top_experts, dropout=dropout) for _ in range(n_layers)])
-        self.norm          = RMSNorm(embed_dim)                                    # Final normalization layer after the last block
+        self.encoder       = nn.ModuleList([Encoder(embed_dim, n_heads, forward_mul, max_seq_len, n_experts, n_top_experts, kv_cache, dropout=dropout) for _ in range(n_layers)])
+        self.norm          = RMSNorm(embed_dim)                                                 # Final normalization layer after the last block
         self.classifier    = Classifier(embed_dim, vocab_size)
 
     def reset_cache(self):
         for block in self.encoder:
             block.attention.reset_cache()
 
-    def forward(self, x):
-        if self.training:
-            x = self.embedding(x)                           # B, S, E  Get word embeddings
-            for block in self.encoder:                      # B, S, E  Loop through the encoders
+    def forward(self, x, kv_cache=True):
+        if self.training or (not kv_cache):
+            x = self.embedding(x)                                                               # B, S, E  Get word embeddings
+            for block in self.encoder:                                                          # B, S, E  Loop through the encoders
                 x = block(x)           
-            x = self.norm(x)                                # B, S, E  Output normalization
-            x = self.classifier(x)                          # B, S, T  Classification
+            x = self.norm(x)                                                                    # B, S, E  Output normalization
+            x = self.classifier(x)                                                              # B, S, T  Classification
         else:
             # During inference only use the last generated token. Keys and Values for previous tokens is stored in the KV Cache.
             token_loc = min(self.max_seq_len, x.shape[-1]) - 1
 
             x = x[:, -1].unsqueeze(-1)
-            x = self.embedding(x)                           # B, S, E  Get word embeddings
-            for block in self.encoder:                      # B, S, E  Loop through the encoders
-                x = block(x, token_loc)           
-            x = self.norm(x)                                # B, S, E  Output normalization
-            x = self.classifier(x)                          # B, S, T  Classification
+            x = self.embedding(x)                                                               # B, S, E  Get word embeddings
+            for block in self.encoder:                                                          # B, S, E  Loop through the encoders
+                x = block(x, token_loc, kv_cache=True)           
+            x = self.norm(x)                                                                    # B, S, E  Output normalization
+            x = self.classifier(x)                                                              # B, S, T  Classification
         return x

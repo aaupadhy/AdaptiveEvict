@@ -111,7 +111,7 @@ class Solver(object):
             # Generate sample output at the end of the epoch
             self.generate_text(n_tokens_to_generate=self.args.gen_tokens_len, input_text=self.args.input_text)
 
-    def generate_text(self, n_tokens_to_generate, input_text='The'):
+    def generate_text(self, input_text='The', n_tokens_to_generate=256, kv_cache=True):
         self.model.eval()
         if self.args.network_type == 'llama':
             self.model.reset_cache()
@@ -125,7 +125,7 @@ class Solver(object):
         # Generate till we reach generated token length
         while len(x[0]) <= n_tokens_to_generate:
             with torch.no_grad():
-                logits = self.model(x[:, -self.args.train_tokens_len:])                     # Use last {train_tokens_len} tokens only (as network is trained with this length) i.e. Context length: train_tokens_len
+                logits = self.model(x[:, -self.args.train_tokens_len:], kv_cache=kv_cache)  # Use last {train_tokens_len} tokens only (as network is trained with this length) i.e. Context length: train_tokens_len
 
             next_token_logits = logits[0, -1]                                               # Use the output of the last token
             

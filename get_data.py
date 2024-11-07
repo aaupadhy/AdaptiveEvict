@@ -52,7 +52,8 @@ def download_data(data_path='./data', data_file='final_data.csv'):
                 lyrics = f.readlines()[1:-1]                                                                            # The first and the last lines are removed due to noise.
                 out_file.write("<sol>\n")                                                                               # Start of new lyrics indicator
                 for line in lyrics:
-                    line_ = line.replace("See Taylor Swift LiveGet tickets as low as $60", "")                          # Found this Ad in the lyrics
+                    line_ = line.replace("You might also like", "")
+                    line_ = line_.replace("See Taylor Swift LiveGet tickets as low as $60", "")       # Found this Ad in the lyrics
                     out_file.write(unicodedata.normalize('NFKD', line_).encode('ascii', 'ignore').decode('utf-8') )     # Unicodes conversion
                 out_file.write("\n<eol>\n")                                                                             # End of the lyrics indicator
     print("Data is ready.")

@@ -227,7 +227,7 @@ class GPT(nn.Module):
         self.encoder       = nn.ModuleList([Encoder(embed_dim, n_heads, forward_mul, max_seq_len, dropout=dropout) for _ in range(n_layers)])
         self.classifier    = Classifier(embed_dim, vocab_size)
 
-    def forward(self, x):                               # B, S
+    def forward(self, x, kv_cache=None):                # B, S
         x = self.embedding(x)                           # B, S, E  Get word embeddings
         for block in self.encoder:                      # B, S, E  Loop through the encoders
             x = block(x)           
