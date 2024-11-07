@@ -31,7 +31,7 @@ python main.py --network_type llama
  
 - The network can be selected between llama and gpt.
 - I have tested the model on Taylor Swift song lyrics.
-- The program will download the dataset to a text file (default name: "data.txt").
+- The program will download the Taylor Swift song lyrics dataset to the text file (default name: "data.txt").
 - To use a custom dataset, replace the content of the file or provide a different text file.
 
 ## Sample Output 
