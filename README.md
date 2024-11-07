@@ -16,7 +16,7 @@
 :white_check_mark: RMSNorm      <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L232">[Here]</a>  
 :white_check_mark: SWiGLU      <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L257">[Here]</a>  
 :white_check_mark: Rotational Positional Encoding (RoPe)  <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L44">[Here]</a>   <br>
-:white_check_mark: KV Cache <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L194">[Here]</a>   <br>
+:white_check_mark: KV Cache <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L186">[Here]</a>   <br>
 :white_check_mark: Mixture of Experts <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L310">[Here]</a>   <br>
 :white_square_button: Grouped Query Attention <br>
 :white_square_button: Infini Attention
