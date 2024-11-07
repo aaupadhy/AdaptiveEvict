@@ -36,9 +36,9 @@ class Solver(object):
                                            tokenizer  = self.tokenizer)
 
         # Define Training model
-        if self.args.network_type.lower() == 'llama':
+        if self.args.network_type == 'llama':
             training_model = LLAMA
-        else:
+        elif self.args.network_type == 'gpt':
             training_model = GPT
 
         self.model = training_model(vocab_size  = self.tokenizer.n_tokens, 
@@ -50,7 +50,7 @@ class Solver(object):
 
         # Option to load the saved model.
         if self.args.load_model:
-            self.model.load_state_dict(torch.load(os.path.join(self.args.model_path, f"{self.args.network_type.lower()}.pt")))
+            self.model.load_state_dict(torch.load(os.path.join(self.args.model_path, f"{self.args.network_type}.pt")))
 
         # Training loss function
         self.loss_fn = nn.CrossEntropyLoss()
@@ -106,7 +106,7 @@ class Solver(object):
                     print(f'Ep: {epoch+1}/{self.args.epochs}\tIt: {i+1}/{iters_per_epoch}\tbatch_loss: {loss:.4f}\tbatch_accuracy: {b_acc:.2%}\tlr:{current_lr:.6f}')
 
             # Save model and token_indexer
-            torch.save(self.model.state_dict(), os.path.join(self.args.model_path, f"{self.args.network_type.lower()}.pt"))
+            torch.save(self.model.state_dict(), os.path.join(self.args.model_path, f"{self.args.network_type}.pt"))
 
             # Generate sample output at the end of the epoch
             self.generate_text(n_tokens_to_generate=self.args.gen_tokens_len, input_text=self.args.input_text)

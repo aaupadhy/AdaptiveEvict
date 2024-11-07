@@ -25,7 +25,9 @@ def print_args(args):
 
 # Update arguments
 def update_args(args):
+    args.network_type = args.network_type.lower()
     if args.test_only:
+        args.load_tokenizer = True
         args.load_model = True
     return args
 
