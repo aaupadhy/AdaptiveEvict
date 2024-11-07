@@ -113,7 +113,8 @@ class Solver(object):
 
     def generate_text(self, n_tokens_to_generate, input_text='The'):
         self.model.eval()
-        self.model.reset_cache()
+        if self.args.network_type == 'llama':
+            self.model.reset_cache()
 
         # Encode input text
         tokens_idx = self.tokenizer.encode(input_text)

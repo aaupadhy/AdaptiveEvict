@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, default=1e-3, help='peak learning rate')    
     
     # LLM arguments
-    parser.add_argument("--network_type", type=str, default='llamma', help='Type of model to use.')
+    parser.add_argument("--network_type", type=str, default='llama', help='Type of model to use.')
     parser.add_argument("--max_merged_tokens", type=int, default=200, help='Maximum number of tokens to be created.')
     parser.add_argument("--train_tokens_len", type=int, default=64, help='number of tokens to use for training.')
     parser.add_argument("--gen_tokens_len", type=int, default=256, help='number of tokens to generate while testing.')

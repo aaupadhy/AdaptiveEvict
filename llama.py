@@ -435,7 +435,7 @@ class LLAMA(nn.Module):
         Tensor: Logits of shape B, S, T
     """    
 
-    def __init__(self, vocab_size, embed_dim, max_seq_len, n_layers, n_heads, forward_mul, n_experts=4, n_top_experts=1, dropout=0.1):
+    def __init__(self, vocab_size, embed_dim, max_seq_len, n_layers, n_heads, forward_mul, n_experts=1, n_top_experts=1, dropout=0.1):
         super().__init__()
         self.max_seq_len   = max_seq_len
 
