@@ -66,7 +66,7 @@ class BytePairTokenizer:
                 token_pairs_frequency = Counter(token_pairs)
 
                 merged_token = None
-                while len(token_pairs_frequency) > 0:                                                       # Must be non-empty dictionary
+                while len(token_pairs_frequency) > 0:                                                       # Must have token pairs that have not been tested yet.
                     tokens_to_merge, max_frequency = token_pairs_frequency.most_common(1)[0]     
 
                     # Added a rule to pair token only if the pair appears more than once.
