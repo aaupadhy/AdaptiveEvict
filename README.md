@@ -1,7 +1,7 @@
 # Large Language Models (LLM) from Scratch in PyTorch
 ### Simplified Scratch Pytorch Implementation of Large Language Models (LLM) with Detailed Steps (Refer to <a href="gpt.py">gpt.py</a> and <a href="llama.py">llama.py</a>)
 
-### Key Points
+## Overview:
 <ul>
   <li> Contains two models: <a href="gpt.py">GPT</a> and <a href="llama.py">LLAMA</a>.</li>
   <li> GPT model serves as the base simple decoder-only transformer and is easier to learn.</li>
