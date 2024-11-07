@@ -6,7 +6,7 @@
   <li> Contains two models: <a href="gpt.py">GPT</a> and <a href="llama.py">LLAMA</a>.</li>
   <li> GPT model serves as the base simple decoder-only transformer and is easier to learn.</li>
   <li> LLAMA contains advanced concepts: Rotational Positional Encoding (RoPe), SwishGLU, RMSNorm, Mixture of Experts, etc. (Refer below.) </li>
-  <li> These models are scaled-down versions of their original architectures. Number of parameters: k (GPT) and k (LLAMA) </li>
+  <li> These models are scaled-down versions of their original architectures. Number of parameters: 141k (GPT) and 423k (LLAMA) </li>
   <li> Downloads the Taylor Swift song lyrics dataset by default for training. </li>
 </ul>  
 
