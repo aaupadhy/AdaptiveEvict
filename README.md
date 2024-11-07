@@ -10,7 +10,7 @@
   <li> Downloads the Taylor Swift song lyrics dataset by default for training. </li>
 </ul>  
 
-## Implementation Status (Added to LLAMA):
+## Implementation Status (LLAMA):
 :white_check_mark: ByTe-Pair Tokenization <a href="tokenizer.py">[Here]</a>   <br>
 :white_check_mark: Temperature, Top-p and Top-k   <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/solver.py#L131">[Here]</a>   <br> 
 :white_check_mark: RMSNorm      <a href="https://github.com/s-chh/PyTorch-Scratch-LLM/blob/186ccf6de0ee0b81a27191c0dafaacf66f6acd30/llama.py#L232">[Here]</a>  
