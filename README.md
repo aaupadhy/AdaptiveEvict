@@ -44,7 +44,6 @@ You know you're not sure
 I can still see you speak, go
 And now I'm fallin' in love
 But I'm standin' in love
-You might also like
 [Pre-Chorus]
 So you got the rain one thing that I know
 What you were right here, right now
