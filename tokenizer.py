@@ -18,12 +18,16 @@ class BytePairTokenizer:
         with open(data_file, encoding='utf-8') as f:
             data = f.read()
 
-        self.define_tokens(data, max_merged_tokens)
+        self.tokenized_data, self.base_tokens, self.merged_tokens = self.define_tokens(data, max_merged_tokens)
         self.n_tokens = len(self.base_tokens) + len(self.merged_tokens)
         
         # Token to Idx and Idx to Tokens dicts for fast lookups
         self.token_to_idx_map = {token:i for i, token in enumerate(self.base_tokens + self.merged_tokens)}
         self.idx_to_token_map = {i:token for i, token in enumerate(self.base_tokens + self.merged_tokens)}
+
+    def display_info(self):
+        print(f"Number of base tokens: {len(self.base_tokens)}")        
+        print(f"Number of merged tokens: {len(self.merged_tokens)}")
 
     def define_tokens(self, data, max_merged_tokens):
         """
@@ -91,10 +95,7 @@ class BytePairTokenizer:
                         i = i + 1
 
         print(f"{len(merged_tokens)} merged tokens created: {merged_tokens}")    
-
-        self.tokenized_data = data_tokens
-        self.base_tokens, self.merged_tokens =  base_tokens, merged_tokens
-        return
+        return data_tokens, base_tokens, merged_tokens
 
     '''
     Functions to encode and decode data:

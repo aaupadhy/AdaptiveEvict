@@ -19,13 +19,21 @@ class Solver(object):
         prepare_data(data_path=args.data_path, data_file=self.args.data_file)
 
         # Tokenizer to convert text to token indices
-        if self.args.load_model:
+        if self.args.load_tokenizer:                                                            # Load saved tokenizer
             with open(os.path.join(self.args.model_path, 'tokenizer.pt'), 'rb') as f:
                 self.tokenizer = pickle.load(f)
+                self.tokenizer.display_info()
         else:
             self.tokenizer = BytePairTokenizer(data_file=os.path.join(self.args.data_path, self.args.data_file), max_merged_tokens=self.args.max_merged_tokens)
             with open(os.path.join(self.args.model_path, 'tokenizer.pt'), 'wb') as f:
                 pickle.dump(self.tokenizer, f)
+
+        # Define data loader
+        self.train_loader = get_dataloader(data_file  = os.path.join(self.args.data_path, self.args.data_file), 
+                                           batch_size = self.args.batch_size, 
+                                           seq_len    = self.args.train_tokens_len, 
+                                           n_workers  = self.args.n_workers, 
+                                           tokenizer  = self.tokenizer)
 
         # Define Training model
         if self.args.network_type.lower() == 'llama':
@@ -47,17 +55,9 @@ class Solver(object):
         # Training loss function
         self.loss_fn = nn.CrossEntropyLoss()
 
-        # Number of training parameters
+        # Training parameters stats
         self.n_parameters = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
         print(f"Number of trainable parameters in the model: {self.n_parameters}")
-
-        # Define data loader
-        self.train_loader = get_dataloader(data_file  = os.path.join(self.args.data_path, self.args.data_file), 
-                                           batch_size = self.args.batch_size, 
-                                           seq_len    = self.args.train_tokens_len, 
-                                           n_workers  = self.args.n_workers, 
-                                           tokenizer  = self.tokenizer)
-
         print(f"Number of tokens per parameters: {self.train_loader.dataset.total_tokens/self.n_parameters:.4f}.")
 
     def train(self):
@@ -153,5 +153,5 @@ class Solver(object):
 
         # Display final output
         generated_text = self.tokenizer.decode(x[0].tolist())            
-        print(f'Generated text for input text "{input_text}" is "{generated_text}"')
+        print(f'\n\nGenerated text for input text "{input_text}" is:\n{generated_text}\n\n')
 
