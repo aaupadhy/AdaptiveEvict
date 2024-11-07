@@ -7,7 +7,7 @@
   <li> GPT model serves as the base simple decoder-only transformer and is easier to learn.</li>
   <li> LLAMA contains advanced concepts: Rotational Positional Encoding (RoPe), SwishGLU, RMSNorm, Mixture of Experts, etc. (Refer below.) </li>
   <li> These models are scaled-down versions of their original architectures. </li>
-  <li> Number of training parameters: 141k (GPT) and 423k (LLAMA) </li>
+  <li> Number of training parameters: 141k (GPT) and 423k (LLAMA). LLAMA has more training parameters due to a mixture of experts, but the inference cost is similar for both models. </li>
   <li> Downloads the Taylor Swift song lyrics dataset by default for training. </li>
 </ul>  
 
