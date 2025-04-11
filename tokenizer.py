@@ -1,6 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
-from collections import Counter
+from collections import Counter, defaultdict
+import time
 
 
 class BytePairTokenizer:
@@ -44,57 +45,75 @@ class BytePairTokenizer:
             tuple of lists: base tokens (as list) and merged tokens (as list)
         """    
 
-        # Generate characters as base tokens
         data_tokens = list(data)
         base_tokens = list(set(data_tokens))
         base_tokens_len = len(base_tokens)
         print(f"{base_tokens_len} base tokens identified: {base_tokens}")        
         
-        # Merge most common appearing token pairs to create new tokens
-        merged_tokens  = []
+        merged_tokens = []
+        original_data_tokens = data_tokens.copy()
+        
         if max_merged_tokens > 0:
             print("Merging most common base token pairs to create new tokens.")
-
+            
             for _ in tqdm(range(max_merged_tokens)):
-
-                # Create pairs
-                data1 = data_tokens[:-1]
-                data2 = data_tokens[1:]
-                token_pairs = [(t1, t2) for t1, t2 in zip(data1, data2)]
-
-                # Get the most common appearing pair for merging
-                token_pairs_frequency = Counter(token_pairs)
-
-                merged_token = None
-                while len(token_pairs_frequency) > 0:                                                       # Must have token pairs that have not been tested yet.
-                    tokens_to_merge, max_frequency = token_pairs_frequency.most_common(1)[0]     
-
-                    # Added a rule to pair token only if the pair appears more than once.
-                    if max_frequency == 1:                                                                  
-                        break       
-
-                    # Added a rule to merge alphanumber with alphanumber and non-alphanumber with non-alphanumber only.
-                    if tokens_to_merge[0].isalnum() != tokens_to_merge[1].isalnum():                    
-                        del token_pairs_frequency[tokens_to_merge]
-                        continue
-
-                    # Merge tokens
-                    merged_token = tokens_to_merge[0] + tokens_to_merge[1]
-                    merged_tokens.append(merged_token)
+                # Build a more efficient representation for pair counting
+                pairs = defaultdict(int)
+                for i in range(len(data_tokens) - 1):
+                    pair = (data_tokens[i], data_tokens[i+1])
+                    pairs[pair] += 1
+                
+                if not pairs:
+                    print("No more pairs to merge")
                     break
-
-                if merged_token is None:
-                    break                                                                                   # Stop if no token pair is found.
-                else:
-                    # Replace token pairs with merged token in the data
-                    i = 0
-                    while i < len(data_tokens) - 1:
-                        if data_tokens[i] == tokens_to_merge[0] and data_tokens[i+1] == tokens_to_merge[1]:
-                            data_tokens[i] = merged_token
-                            del data_tokens[i+1]
-                        i = i + 1
-
-        print(f"{len(merged_tokens)} merged tokens created: {merged_tokens}")    
+                
+                # Find the most common pair that meets our criteria
+                best_pair = None
+                best_count = 0
+                
+                for pair, count in pairs.items():
+                    # Skip if frequency is too low
+                    if count <= 1:
+                        continue
+                    
+                    # Skip mixed alphanumeric/non-alphanumeric pairs
+                    if pair[0].isalnum() != pair[1].isalnum():
+                        continue
+                    
+                    if count > best_count:
+                        best_count = count
+                        best_pair = pair
+                
+                # If no valid pair was found, stop merging
+                if best_pair is None:
+                    print(f"No valid token pairs found after {len(merged_tokens)} merges. Stopping.")
+                    break
+                
+                # Create the new merged token
+                new_token = best_pair[0] + best_pair[1]
+                merged_tokens.append(new_token)
+                
+                # Replace all occurrences of the pair with the new token using a more efficient approach
+                new_data_tokens = []
+                i = 0
+                while i < len(data_tokens):
+                    if i < len(data_tokens) - 1 and data_tokens[i] == best_pair[0] and data_tokens[i+1] == best_pair[1]:
+                        new_data_tokens.append(new_token)
+                        i += 2
+                    else:
+                        new_data_tokens.append(data_tokens[i])
+                        i += 1
+                
+                data_tokens = new_data_tokens
+                
+                # Break early if we're not making progress
+                if len(data_tokens) >= len(original_data_tokens) - 10:
+                    if len(merged_tokens) > 10:  # Allow a few initial merges
+                        print(f"Minimal compression achieved. Stopping after {len(merged_tokens)} merges.")
+                        break
+            
+            print(f"{len(merged_tokens)} merged tokens created: {merged_tokens}")
+            
         return data_tokens, base_tokens, merged_tokens
 
     '''
@@ -117,16 +136,20 @@ class BytePairTokenizer:
         """    
 
         tokens = list(sentence)
-
-        # Tokens are merged in the same order they were created.
+        
+        # Process in batches for efficiency
         for merged_token in self.merged_tokens:
+            new_tokens = []
             i = 0
-            while i < len(tokens) - 1:
-                if (tokens[i] + tokens[i+1]) == merged_token:
-                    tokens[i] = merged_token
-                    del tokens[i+1]
-                i = i + 1
-
+            while i < len(tokens):
+                if i < len(tokens) - 1 and tokens[i] + tokens[i+1] == merged_token:
+                    new_tokens.append(merged_token)
+                    i += 2
+                else:
+                    new_tokens.append(tokens[i])
+                    i += 1
+            tokens = new_tokens
+        
         return tokens
 
     # Function to convert tokens to token indices

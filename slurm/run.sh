@@ -38,5 +38,5 @@ nvidia-smi
 #     main.py --mode all
 
 
-python main.py --network_type llama
+python main.py --network_type llama --max_merged_tokens 200
 echo "Job finished at $(date)"
