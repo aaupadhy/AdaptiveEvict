@@ -6,8 +6,8 @@ from typing import List, Dict, Any
 
 class KVCacheVisualizer:
     def __init__(self, run_name: str):
-        this.run_name = run_name
-        this.metrics_history = {
+        self.run_name = run_name
+        self.metrics_history = {
             'reward': [],
             'cost': [],
             'semantic_relevance': [],
@@ -19,9 +19,9 @@ class KVCacheVisualizer:
         }
         
     def update_metrics(self, metrics: Dict[str, float]):
-        for key in this.metrics_history:
+        for key in self.metrics_history:
             if key in metrics:
-                this.metrics_history[key].append(metrics[key])
+                self.metrics_history[key].append(metrics[key])
                 
     def plot_training_progress(self, episode: int):
         fig, axes = plt.subplots(2, 2, figsize=(15, 12))
@@ -29,8 +29,8 @@ class KVCacheVisualizer:
         
         # Plot 1: Reward and Cost
         ax1 = axes[0, 0]
-        ax1.plot(this.metrics_history['reward'], label='Reward', color='blue')
-        ax1.plot(this.metrics_history['cost'], label='Cost', color='red')
+        ax1.plot(self.metrics_history['reward'], label='Reward', color='blue')
+        ax1.plot(self.metrics_history['cost'], label='Cost', color='red')
         ax1.set_title('Reward and Cost Over Time')
         ax1.set_xlabel('Steps')
         ax1.set_ylabel('Value')
@@ -39,8 +39,8 @@ class KVCacheVisualizer:
         
         # Plot 2: Cache Performance
         ax2 = axes[0, 1]
-        ax2.plot(this.metrics_history['primary_utilization'], label='Primary Cache', color='green')
-        ax2.plot(this.metrics_history['secondary_utilization'], label='Secondary Cache', color='orange')
+        ax2.plot(self.metrics_history['primary_utilization'], label='Primary Cache', color='green')
+        ax2.plot(self.metrics_history['secondary_utilization'], label='Secondary Cache', color='orange')
         ax2.set_title('Cache Utilization')
         ax2.set_xlabel('Steps')
         ax2.set_ylabel('Utilization Rate')
@@ -49,8 +49,8 @@ class KVCacheVisualizer:
         
         # Plot 3: Semantic Relevance and Cache Miss Rate
         ax3 = axes[1, 0]
-        ax3.plot(this.metrics_history['semantic_relevance'], label='Semantic Relevance', color='purple')
-        ax3.plot(this.metrics_history['cache_miss_rate'], label='Cache Miss Rate', color='brown')
+        ax3.plot(self.metrics_history['semantic_relevance'], label='Semantic Relevance', color='purple')
+        ax3.plot(self.metrics_history['cache_miss_rate'], label='Cache Miss Rate', color='brown')
         ax3.set_title('Semantic Performance')
         ax3.set_xlabel('Steps')
         ax3.set_ylabel('Score')
@@ -59,8 +59,8 @@ class KVCacheVisualizer:
         
         # Plot 4: Eviction and Retrieval Operations
         ax4 = axes[1, 1]
-        ax4.plot(this.metrics_history['eviction_count'], label='Evictions', color='red')
-        ax4.plot(this.metrics_history['retrieval_count'], label='Retrievals', color='blue')
+        ax4.plot(self.metrics_history['eviction_count'], label='Evictions', color='red')
+        ax4.plot(self.metrics_history['retrieval_count'], label='Retrievals', color='blue')
         ax4.set_title('Cache Operations')
         ax4.set_xlabel('Steps')
         ax4.set_ylabel('Count')
@@ -117,9 +117,9 @@ class KVCacheVisualizer:
     def plot_reward_components(self, episode: int):
         fig, ax = plt.subplots(figsize=(10, 6))
         
-        semantic_reward = np.array(this.metrics_history['semantic_relevance']) * 0.3
-        cache_miss_penalty = -np.array(this.metrics_history['cache_miss_rate']) * 0.5
-        cost_penalty = -np.array(this.metrics_history['cost'])
+        semantic_reward = np.array(self.metrics_history['semantic_relevance']) * 0.3
+        cache_miss_penalty = -np.array(self.metrics_history['cache_miss_rate']) * 0.5
+        cost_penalty = -np.array(self.metrics_history['cost'])
         
         x = np.arange(len(semantic_reward))
         width = 0.25
@@ -143,13 +143,13 @@ class KVCacheVisualizer:
         
     def log_summary_statistics(self, episode: int):
         summary_stats = {
-            "mean_reward": np.mean(this.metrics_history['reward'][-100:]),
-            "mean_semantic_relevance": np.mean(this.metrics_history['semantic_relevance'][-100:]),
-            "mean_cache_miss_rate": np.mean(this.metrics_history['cache_miss_rate'][-100:]),
-            "mean_primary_utilization": np.mean(this.metrics_history['primary_utilization'][-100:]),
-            "mean_secondary_utilization": np.mean(this.metrics_history['secondary_utilization'][-100:]),
-            "total_evictions": sum(this.metrics_history['eviction_count']),
-            "total_retrievals": sum(this.metrics_history['retrieval_count'])
+            "mean_reward": np.mean(self.metrics_history['reward'][-100:]),
+            "mean_semantic_relevance": np.mean(self.metrics_history['semantic_relevance'][-100:]),
+            "mean_cache_miss_rate": np.mean(self.metrics_history['cache_miss_rate'][-100:]),
+            "mean_primary_utilization": np.mean(self.metrics_history['primary_utilization'][-100:]),
+            "mean_secondary_utilization": np.mean(self.metrics_history['secondary_utilization'][-100:]),
+            "total_evictions": sum(self.metrics_history['eviction_count']),
+            "total_retrievals": sum(self.metrics_history['retrieval_count'])
         }
         
         wandb.log({

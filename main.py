@@ -46,7 +46,7 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=25, help='number of training epochs')
     parser.add_argument('--warmup_epochs', type=int, default=5, help='number of epochs to warmup learning rate')
     parser.add_argument('--batch_size', type=int, default=64, help='batch size')
-    parser.add_argument('--n_workers', type=int, default=4, help='number of workers for data loaders')
+    parser.add_argument('--n_workers', type=int, default=2, help='number of workers for data loaders')
     parser.add_argument('--lr', type=float, default=1e-3, help='peak learning rate')    
     
     # LLM arguments

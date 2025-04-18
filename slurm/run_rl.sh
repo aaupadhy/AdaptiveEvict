@@ -32,11 +32,17 @@ python generate_rl_data.py \
     --num_prompts 1000 \
     --min_length 50 \
     --max_length 200 \
-    --output_file data/rl_training_data.json
+    --output_file data/rl_training_data.json \
+    --model_path ./saved_models \
+    --load_tokenizer \
+    --load_model
 
 echo "Training RL agent..."
 python train_rl_agent.py \
     --training_data_path data/rl_training_data.json \
+    --model_path ./saved_models \
+    --load_tokenizer \
+    --load_model \
     --vocab_size 32000 \
     --embed_dim 512 \
     --max_seq_len 2048 \

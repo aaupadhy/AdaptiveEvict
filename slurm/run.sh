@@ -4,8 +4,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --gres=gpu:a100:1
-#SBATCH --mem=60G
+#SBATCH --gres=gpu:1
+#SBATCH --mem=100G
 #SBATCH --time=15:00:00
 
 module purge
@@ -18,7 +18,6 @@ cd $PROJECT_DIR
 export PYTHONPATH="${PROJECT_DIR}:${PYTHONPATH}"
 
 COMPUTE_NODE=$(hostname -s)
-# echo "ssh -N -L 8787:${COMPUTE_NODE}:8787 aaupadhy@grace.hprc.tamu.edu"
 
 source ~/.bashrc
 conda activate ML
@@ -27,16 +26,5 @@ echo "Job started at $(date)"
 echo "Running on ${COMPUTE_NODE}.grace.hprc.tamu.edu"
 nvidia-smi
 
-# torchrun \
-#     --nnodes=1 \
-#     --nproc_per_node=1 \
-#     --master_port=$MASTER_PORT \
-#     --master_addr="127.0.0.1" \
-#     --node_rank=0 \
-#     --max_restarts=0 \
-#     --start_method=spawn \
-#     main.py --mode all
-
-
-python main.py --network_type llama --max_merged_tokens 200
+python main.py --network_type llama --max_merged_tokens 5000
 echo "Job finished at $(date)"

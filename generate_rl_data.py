@@ -58,7 +58,8 @@ if __name__ == '__main__':
     parser.add_argument('--data_file', type=str, default='train.txt')
     parser.add_argument('--model_path', type=str, default='models')
     parser.add_argument('--load_tokenizer', action='store_true')
-    parser.add_argument('--max_merged_tokens', type=int, default=50000)
+    parser.add_argument('--load_model', action='store_true')
+    parser.add_argument('--max_merged_tokens', type=int, default=500)
     
     args = parser.parse_args()
     main(args) 
