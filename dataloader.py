@@ -10,14 +10,22 @@ class CustomDataset(Dataset):
         self.tokenizer = tokenizer
 
         # Use tokenized data from tokenizer if available
-        try:
-            self.data = self.tokenizer.tokens_to_indices(self.tokenizer.tokenized_data)
-        except:
-            # Generate tokens indices of the data
-            with open(data_file, encoding='utf-8') as f:
-                data = f.read()
-            print("Tokenizing data file...")
-            self.data = self.tokenizer.encode(data, tqdm=True)                                     
+        # try:
+        #     self.data = self.tokenizer.tokens_to_indices(self.tokenizer.tokenized_data)
+        # except:
+        #     # Generate tokens indices of the data
+        #     with open(data_file, encoding='utf-8') as f:
+        #         data = f.read()
+        #     print("Tokenizing data file...")
+        #     self.data = self.tokenizer.encode(data, tqdm=True)      
+
+        # Directly encode the entire data file into token indices
+        with open(data_file, encoding='utf-8') as f:
+            raw_text = f.read()
+
+        print("Tokenizing data file...")
+        self.data = self.tokenizer.encode(raw_text)
+                               
         
         self.total_tokens = len(self.data)                                          
         self.epoch_len = self.total_tokens // self.seq_len                          # Epoch length = total tokens // training sequence length
