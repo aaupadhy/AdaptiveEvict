@@ -63,53 +63,45 @@ class Solver(object):
     def train(self):
         iters_per_epoch = len(self.train_loader)
 
-        # Define optimizer for training the model
         optimizer = optim.AdamW(self.model.parameters(), lr=self.args.lr, weight_decay=1e-3)
+        current_iter = 0
+        warmup_iters = (iters_per_epoch * self.args.warmup_epochs)
+        total_iters = iters_per_epoch * self.args.epochs
 
-        # schedulers for linear warmup of lr and then cosine decay to 1e-5. Learning rate is adjusted per step to accomodate large/small batch sizes.
-        current_iter  = 0
-        warmup_iters  = (iters_per_epoch * self.args.warmup_epochs) - 1
-        total_iters   = (iters_per_epoch * self.args.epochs)
         linear_warmup = optim.lr_scheduler.LinearLR(optimizer, start_factor=0.01, end_factor=1.0, total_iters=warmup_iters, last_epoch=-1)
-        cos_decay     = optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=total_iters-warmup_iters, eta_min=1e-5)
+        cosine_decay = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(1, total_iters - warmup_iters), eta_min=1e-5)
 
-        # Training loop
         for epoch in range(self.args.epochs):
             self.model.train()
-            for i, data in enumerate(self.train_loader):
-
-                x, y = data
+            for i, (x, y) in enumerate(self.train_loader):
                 x, y = x.cuda(), y.cuda()
 
                 logits = self.model(x)
+                logits = logits.view(-1, logits.size(-1))
+                y = y.view(-1)
 
-                logits = logits.flatten(0, 1)
-                y = y.flatten()
-
-                loss  = self.loss_fn(logits, y)
-                b_acc =  (logits.max(1)[1]==y).float().mean()
+                loss = self.loss_fn(logits, y)
+                batch_accuracy = (logits.argmax(dim=1) == y).float().mean().item()
 
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
 
-                # Update learning rate using schedulers
                 if current_iter < warmup_iters:
                     linear_warmup.step()
                 else:
-                    cos_decay.step()   
-                current_iter += 1             
+                    cosine_decay.step()
 
-                # Log training progress
+                current_iter += 1
+
                 if i % 50 == 0 or i == (iters_per_epoch - 1):
-                    current_lr = optimizer.param_groups[-1]['lr']
-                    print(f'Ep: {epoch+1}/{self.args.epochs}\tIt: {i+1}/{iters_per_epoch}\tbatch_loss: {loss:.4f}\tbatch_accuracy: {b_acc:.2%}\tlr:{current_lr:.6f}')
+                    current_lr = optimizer.param_groups[0]['lr']
+                    print(f"Ep: {epoch+1}/{self.args.epochs}\tIt: {i+1}/{iters_per_epoch}\tbatch_loss: {loss.item():.4f}\tbatch_accuracy: {batch_accuracy:.2%}\tlr:{current_lr:.6f}")
 
-            # Save model and token_indexer
+            # Save checkpoint and sample output
             torch.save(self.model.state_dict(), os.path.join(self.args.model_path, f"{self.args.network_type}.pt"))
-
-            # Generate sample output at the end of the epoch
             self.generate_text(n_tokens_to_generate=self.args.gen_tokens_len, input_text=self.args.input_text)
+
 
     def generate_text(self, input_text='The', n_tokens_to_generate=256, kv_cache=True):
         self.model.eval()

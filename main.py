@@ -59,11 +59,11 @@ if __name__ == '__main__':
     parser.add_argument("--top_k", type=int, default=10, help='Top-k tokens to consider while generating text')
 
     # LLM Network arguments
-    parser.add_argument("--embed_dim", type=int, default=48, help='dimensionality of the latent space')
-    parser.add_argument("--n_heads", type=int, default=4, help='number of heads to use in Multi-head attention')
-    parser.add_argument("--forward_mul", type=int, default=2, help='forward multiplier')
+    parser.add_argument("--embed_dim", type=int, default=256, help='dimensionality of the latent space')
+    parser.add_argument("--n_heads", type=int, default=8, help='number of heads to use in Multi-head attention')
+    parser.add_argument("--forward_mul", type=int, default=4, help='forward multiplier')
     parser.add_argument("--n_layers", type=int, default=6, help='number of encoder layers')
-    parser.add_argument("--dropout", type=float, default=0.0, help='dropout value')
+    parser.add_argument("--dropout", type=float, default=0.1, help='dropout value')
 
     parser.add_argument('--model_path', type=str, default='./saved_models', help='path to store trained model')
     parser.add_argument("--load_model", type=bool, default=False, help="load saved model")
