@@ -1,0 +1,153 @@
+Job started at Sun Apr 20 16:26:59 CDT 2025
+Running on g016.grace.hprc.tamu.edu
+Sun Apr 20 16:26:59 2025       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.230.02             Driver Version: 535.230.02   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  | 00000000:D8:00.0 Off |                    0 |
+| N/A   20C    P0              29W / 250W |      0MiB / 40960MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
+Generating RL training data...
+INFO:get_data:Using data from data/train.txt
+Vocab size: 6969
+Tokenizing data file...
+33315753 tokens created from the file. Each epoch will have 520558 batches.
+Traceback (most recent call last):
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/generate_rl_data.py", line 72, in <module>
+    main(args)
+    ~~~~^^^^^^
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/generate_rl_data.py", line 29, in main
+    solver = Solver(args)
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/solver.py", line 53, in __init__
+    self.model.load_state_dict(torch.load(os.path.join(self.args.model_path, f"{self.args.network_type}.pt")))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/user/sarveshgs22/.conda/envs/ISR/lib/python3.13/site-packages/torch/nn/modules/module.py", line 2581, in load_state_dict
+    raise RuntimeError(
+    ...<3 lines>...
+    )
+RuntimeError: Error(s) in loading state_dict for LLAMA:
+	Unexpected key(s) in state_dict: "encoder.4.norm1.weights", "encoder.4.attention.att_mask", "encoder.4.attention.queries.weight", "encoder.4.attention.queries.bias", "encoder.4.attention.keys.weight", "encoder.4.attention.keys.bias", "encoder.4.attention.values.weight", "encoder.4.attention.values.bias", "encoder.4.attention.out_projection.weight", "encoder.4.attention.out_projection.bias", "encoder.4.attention.rotary_embedding.x_cos", "encoder.4.attention.rotary_embedding.x_sin", "encoder.4.norm2.weights", "encoder.4.moe_ff.gate.weight", "encoder.4.moe_ff.gate.bias", "encoder.4.moe_ff.experts.0.fc1.weight", "encoder.4.moe_ff.experts.0.fc1.bias", "encoder.4.moe_ff.experts.0.act.fc.weight", "encoder.4.moe_ff.experts.0.act.fc.bias", "encoder.4.moe_ff.experts.0.fc2.weight", "encoder.4.moe_ff.experts.0.fc2.bias", "encoder.4.moe_ff.experts.1.fc1.weight", "encoder.4.moe_ff.experts.1.fc1.bias", "encoder.4.moe_ff.experts.1.act.fc.weight", "encoder.4.moe_ff.experts.1.act.fc.bias", "encoder.4.moe_ff.experts.1.fc2.weight", "encoder.4.moe_ff.experts.1.fc2.bias", "encoder.4.moe_ff.experts.2.fc1.weight", "encoder.4.moe_ff.experts.2.fc1.bias", "encoder.4.moe_ff.experts.2.act.fc.weight", "encoder.4.moe_ff.experts.2.act.fc.bias", "encoder.4.moe_ff.experts.2.fc2.weight", "encoder.4.moe_ff.experts.2.fc2.bias", "encoder.4.moe_ff.experts.3.fc1.weight", "encoder.4.moe_ff.experts.3.fc1.bias", "encoder.4.moe_ff.experts.3.act.fc.weight", "encoder.4.moe_ff.experts.3.act.fc.bias", "encoder.4.moe_ff.experts.3.fc2.weight", "encoder.4.moe_ff.experts.3.fc2.bias", "encoder.5.norm1.weights", "encoder.5.attention.att_mask", "encoder.5.attention.queries.weight", "encoder.5.attention.queries.bias", "encoder.5.attention.keys.weight", "encoder.5.attention.keys.bias", "encoder.5.attention.values.weight", "encoder.5.attention.values.bias", "encoder.5.attention.out_projection.weight", "encoder.5.attention.out_projection.bias", "encoder.5.attention.rotary_embedding.x_cos", "encoder.5.attention.rotary_embedding.x_sin", "encoder.5.norm2.weights", "encoder.5.moe_ff.gate.weight", "encoder.5.moe_ff.gate.bias", "encoder.5.moe_ff.experts.0.fc1.weight", "encoder.5.moe_ff.experts.0.fc1.bias", "encoder.5.moe_ff.experts.0.act.fc.weight", "encoder.5.moe_ff.experts.0.act.fc.bias", "encoder.5.moe_ff.experts.0.fc2.weight", "encoder.5.moe_ff.experts.0.fc2.bias", "encoder.5.moe_ff.experts.1.fc1.weight", "encoder.5.moe_ff.experts.1.fc1.bias", "encoder.5.moe_ff.experts.1.act.fc.weight", "encoder.5.moe_ff.experts.1.act.fc.bias", "encoder.5.moe_ff.experts.1.fc2.weight", "encoder.5.moe_ff.experts.1.fc2.bias", "encoder.5.moe_ff.experts.2.fc1.weight", "encoder.5.moe_ff.experts.2.fc1.bias", "encoder.5.moe_ff.experts.2.act.fc.weight", "encoder.5.moe_ff.experts.2.act.fc.bias", "encoder.5.moe_ff.experts.2.fc2.weight", "encoder.5.moe_ff.experts.2.fc2.bias", "encoder.5.moe_ff.experts.3.fc1.weight", "encoder.5.moe_ff.experts.3.fc1.bias", "encoder.5.moe_ff.experts.3.act.fc.weight", "encoder.5.moe_ff.experts.3.act.fc.bias", "encoder.5.moe_ff.experts.3.fc2.weight", "encoder.5.moe_ff.experts.3.fc2.bias", "encoder.6.norm1.weights", "encoder.6.attention.att_mask", "encoder.6.attention.queries.weight", "encoder.6.attention.queries.bias", "encoder.6.attention.keys.weight", "encoder.6.attention.keys.bias", "encoder.6.attention.values.weight", "encoder.6.attention.values.bias", "encoder.6.attention.out_projection.weight", "encoder.6.attention.out_projection.bias", "encoder.6.attention.rotary_embedding.x_cos", "encoder.6.attention.rotary_embedding.x_sin", "encoder.6.norm2.weights", "encoder.6.moe_ff.gate.weight", "encoder.6.moe_ff.gate.bias", "encoder.6.moe_ff.experts.0.fc1.weight", "encoder.6.moe_ff.experts.0.fc1.bias", "encoder.6.moe_ff.experts.0.act.fc.weight", "encoder.6.moe_ff.experts.0.act.fc.bias", "encoder.6.moe_ff.experts.0.fc2.weight", "encoder.6.moe_ff.experts.0.fc2.bias", "encoder.6.moe_ff.experts.1.fc1.weight", "encoder.6.moe_ff.experts.1.fc1.bias", "encoder.6.moe_ff.experts.1.act.fc.weight", "encoder.6.moe_ff.experts.1.act.fc.bias", "encoder.6.moe_ff.experts.1.fc2.weight", "encoder.6.moe_ff.experts.1.fc2.bias", "encoder.6.moe_ff.experts.2.fc1.weight", "encoder.6.moe_ff.experts.2.fc1.bias", "encoder.6.moe_ff.experts.2.act.fc.weight", "encoder.6.moe_ff.experts.2.act.fc.bias", "encoder.6.moe_ff.experts.2.fc2.weight", "encoder.6.moe_ff.experts.2.fc2.bias", "encoder.6.moe_ff.experts.3.fc1.weight", "encoder.6.moe_ff.experts.3.fc1.bias", "encoder.6.moe_ff.experts.3.act.fc.weight", "encoder.6.moe_ff.experts.3.act.fc.bias", "encoder.6.moe_ff.experts.3.fc2.weight", "encoder.6.moe_ff.experts.3.fc2.bias", "encoder.7.norm1.weights", "encoder.7.attention.att_mask", "encoder.7.attention.queries.weight", "encoder.7.attention.queries.bias", "encoder.7.attention.keys.weight", "encoder.7.attention.keys.bias", "encoder.7.attention.values.weight", "encoder.7.attention.values.bias", "encoder.7.attention.out_projection.weight", "encoder.7.attention.out_projection.bias", "encoder.7.attention.rotary_embedding.x_cos", "encoder.7.attention.rotary_embedding.x_sin", "encoder.7.norm2.weights", "encoder.7.moe_ff.gate.weight", "encoder.7.moe_ff.gate.bias", "encoder.7.moe_ff.experts.0.fc1.weight", "encoder.7.moe_ff.experts.0.fc1.bias", "encoder.7.moe_ff.experts.0.act.fc.weight", "encoder.7.moe_ff.experts.0.act.fc.bias", "encoder.7.moe_ff.experts.0.fc2.weight", "encoder.7.moe_ff.experts.0.fc2.bias", "encoder.7.moe_ff.experts.1.fc1.weight", "encoder.7.moe_ff.experts.1.fc1.bias", "encoder.7.moe_ff.experts.1.act.fc.weight", "encoder.7.moe_ff.experts.1.act.fc.bias", "encoder.7.moe_ff.experts.1.fc2.weight", "encoder.7.moe_ff.experts.1.fc2.bias", "encoder.7.moe_ff.experts.2.fc1.weight", "encoder.7.moe_ff.experts.2.fc1.bias", "encoder.7.moe_ff.experts.2.act.fc.weight", "encoder.7.moe_ff.experts.2.act.fc.bias", "encoder.7.moe_ff.experts.2.fc2.weight", "encoder.7.moe_ff.experts.2.fc2.bias", "encoder.7.moe_ff.experts.3.fc1.weight", "encoder.7.moe_ff.experts.3.fc1.bias", "encoder.7.moe_ff.experts.3.act.fc.weight", "encoder.7.moe_ff.experts.3.act.fc.bias", "encoder.7.moe_ff.experts.3.fc2.weight", "encoder.7.moe_ff.experts.3.fc2.bias". 
+	size mismatch for encoder.0.attention.rotary_embedding.x_cos: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.0.attention.rotary_embedding.x_sin: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.0.moe_ff.experts.0.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.0.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.0.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.0.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.0.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.0.moe_ff.experts.1.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.1.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.1.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.1.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.1.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.0.moe_ff.experts.2.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.2.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.2.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.2.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.2.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.0.moe_ff.experts.3.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.3.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.3.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.0.moe_ff.experts.3.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.0.moe_ff.experts.3.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.1.attention.rotary_embedding.x_cos: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.1.attention.rotary_embedding.x_sin: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.1.moe_ff.experts.0.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.0.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.0.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.0.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.0.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.1.moe_ff.experts.1.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.1.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.1.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.1.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.1.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.1.moe_ff.experts.2.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.2.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.2.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.2.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.2.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.1.moe_ff.experts.3.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.3.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.3.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.1.moe_ff.experts.3.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.1.moe_ff.experts.3.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.2.attention.rotary_embedding.x_cos: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.2.attention.rotary_embedding.x_sin: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.2.moe_ff.experts.0.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.0.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.0.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.0.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.0.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.2.moe_ff.experts.1.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.1.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.1.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.1.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.1.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.2.moe_ff.experts.2.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.2.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.2.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.2.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.2.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.2.moe_ff.experts.3.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.3.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.3.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.2.moe_ff.experts.3.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.2.moe_ff.experts.3.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.3.attention.rotary_embedding.x_cos: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.3.attention.rotary_embedding.x_sin: copying a param with shape torch.Size([1, 64, 1, 32]) from checkpoint, the shape in current model is torch.Size([1, 64, 1, 64]).
+	size mismatch for encoder.3.moe_ff.experts.0.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.0.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.0.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.0.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.0.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.3.moe_ff.experts.1.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.1.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.1.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.1.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.1.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.3.moe_ff.experts.2.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.2.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.2.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.2.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.2.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for encoder.3.moe_ff.experts.3.fc1.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.3.fc1.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.3.act.fc.weight: copying a param with shape torch.Size([1024, 256]) from checkpoint, the shape in current model is torch.Size([512, 256]).
+	size mismatch for encoder.3.moe_ff.experts.3.act.fc.bias: copying a param with shape torch.Size([1024]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for encoder.3.moe_ff.experts.3.fc2.weight: copying a param with shape torch.Size([256, 1024]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+Training RL agent...
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: sarveshgs22tamu (sarveshgs22tamu-texas-a-m-university) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.19.9
+wandb: Run data is saved locally in /scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/wandb/run-20250420_162850-f85qty4r
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run visionary-sound-3
+wandb: ⭐️ View project at https://wandb.ai/sarveshgs22tamu-texas-a-m-university/adaptive-kv-cache
+wandb: 🚀 View run at https://wandb.ai/sarveshgs22tamu-texas-a-m-university/adaptive-kv-cache/runs/f85qty4r
+Traceback (most recent call last):
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/train_rl_agent.py", line 160, in <module>
+    train(args)
+    ~~~~~^^^^^^
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/train_rl_agent.py", line 24, in train
+    training_data = load_training_data(args.training_data_path)
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/train_rl_agent.py", line 13, in load_training_data
+    with open(data_path, 'r') as f:
+         ~~~~^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'data/rl_training_data.json'
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mvisionary-sound-3[0m at: [34mhttps://wandb.ai/sarveshgs22tamu-texas-a-m-university/adaptive-kv-cache/runs/f85qty4r[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20250420_162850-f85qty4r/logs[0m
+Job finished at Sun Apr 20 16:28:51 CDT 2025

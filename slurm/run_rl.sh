@@ -13,18 +13,15 @@ module load WebProxy
 export http_proxy=http://10.73.132.63:8080
 export https_proxy=http://10.73.132.63:8080
 
-PROJECT_DIR="/scratch/user/aaupadhy/college/projects/AdaptiveEvictLLMfScratch/"
+PROJECT_DIR="/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/"
 cd $PROJECT_DIR
 export PYTHONPATH="${PROJECT_DIR}:${PYTHONPATH}"
 
-COMPUTE_NODE=$(hostname -s)
-# echo "ssh -N -L 8787:${COMPUTE_NODE}:8787 aaupadhy@grace.hprc.tamu.edu"
-
 source ~/.bashrc
-conda activate ML
+conda activate ISR
 
 echo "Job started at $(date)"
-echo "Running on ${COMPUTE_NODE}.grace.hprc.tamu.edu"
+echo "Running on $(hostname -s).grace.hprc.tamu.edu"
 nvidia-smi
 
 echo "Generating RL training data..."
@@ -34,19 +31,28 @@ python generate_rl_data.py \
     --max_length 200 \
     --output_file data/rl_training_data.json \
     --model_path ./saved_models \
+    --data_path data \
+    --data_file train.txt \
+    --network_type llama \
+    --load_model \
     --load_tokenizer \
-    --load_model
+    --embed_dim 256 \
+    --n_layers 8 \
+    --n_heads 8 \
+    --forward_mul 4 \
+    --train_tokens_len 64 \
+    --batch_size 64 \
+    --dropout 0.1 \
+    --n_workers 2 \
+    --max_merged_tokens 5000
 
 echo "Training RL agent..."
 python train_rl_agent.py \
     --training_data_path data/rl_training_data.json \
-    --model_path ./saved_models \
-    --load_tokenizer \
-    --load_model \
-    --vocab_size 32000 \
-    --embed_dim 512 \
-    --max_seq_len 2048 \
-    --n_layers 6 \
+    --vocab_size 6969 \
+    --embed_dim 256 \
+    --max_seq_len 64 \
+    --n_layers 8 \
     --n_heads 8 \
     --forward_mul 4 \
     --max_primary_size 1024 \

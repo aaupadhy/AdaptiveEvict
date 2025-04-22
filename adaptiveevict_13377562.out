@@ -1,0 +1,70 @@
+Job started at Sun Apr 20 15:50:48 CDT 2025
+Running on g062.grace.hprc.tamu.edu
+Sun Apr 20 15:50:48 2025       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.230.02             Driver Version: 535.230.02   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  | 00000000:3B:00.0 Off |                  Off |
+| N/A   19C    P0              30W / 250W |      0MiB / 40960MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
+Generating RL training data...
+INFO:get_data:Using data from data/train.txt
+Vocab size: 6969
+Traceback (most recent call last):
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/generate_rl_data.py", line 58, in <module>
+    main(args)
+    ~~~~^^^^^^
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/generate_rl_data.py", line 29, in main
+    solver = Solver(args)
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/solver.py", line 34, in __init__
+    seq_len    = self.args.train_tokens_len,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Namespace' object has no attribute 'train_tokens_len'
+Training RL agent...
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
+Traceback (most recent call last):
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/train_rl_agent.py", line 160, in <module>
+    train(args)
+    ~~~~~^^^^^^
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/train_rl_agent.py", line 21, in train
+    wandb.init(project="adaptive-kv-cache", config=args)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/user/sarveshgs22/.conda/envs/ISR/lib/python3.13/site-packages/wandb/sdk/wandb_init.py", line 1544, in init
+    wandb._sentry.reraise(e)
+    ~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/scratch/user/sarveshgs22/.conda/envs/ISR/lib/python3.13/site-packages/wandb/analytics/sentry.py", line 156, in reraise
+    raise exc.with_traceback(sys.exc_info()[2])
+  File "/scratch/user/sarveshgs22/.conda/envs/ISR/lib/python3.13/site-packages/wandb/sdk/wandb_init.py", line 1478, in init
+    wi.maybe_login(init_settings)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/scratch/user/sarveshgs22/.conda/envs/ISR/lib/python3.13/site-packages/wandb/sdk/wandb_init.py", line 177, in maybe_login
+    wandb_login._login(
+    ~~~~~~~~~~~~~~~~~~^
+        anonymous=run_settings.anonymous,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        _silent=run_settings.quiet or run_settings.silent,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/scratch/user/sarveshgs22/.conda/envs/ISR/lib/python3.13/site-packages/wandb/sdk/wandb_login.py", line 305, in _login
+    key, key_status = wlogin.prompt_api_key()
+                      ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/scratch/user/sarveshgs22/.conda/envs/ISR/lib/python3.13/site-packages/wandb/sdk/wandb_login.py", line 234, in prompt_api_key
+    raise UsageError("api_key not configured (no-tty). call " + directive)
+wandb.errors.errors.UsageError: api_key not configured (no-tty). call wandb.login(key=[your_api_key])
+Job finished at Sun Apr 20 15:54:13 CDT 2025

@@ -162,3 +162,4 @@ wandb/
 monitoring/
 saved_models/
 data/
+.out
