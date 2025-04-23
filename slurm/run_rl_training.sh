@@ -27,7 +27,7 @@ nvidia-smi
 
 echo "Training RL agent..."
 python train_rl_agent.py \
-    --training_data_path data/rl_training_data.json \
+    --training_data_path data/rl_training_tiny.json \
     --vocab_size 22369 \
     --embed_dim 256 \
     --max_seq_len 256 \

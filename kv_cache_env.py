@@ -4,6 +4,7 @@ import numpy as np
 import wandb
 from kv_storage import KVCacheStorage
 from sklearn.metrics.pairwise import cosine_similarity
+from llama import LLAMA
 
 class KVCacheEnv:
     def __init__(self, llama_model, max_primary_size, max_secondary_size, 
@@ -101,8 +102,9 @@ class KVCacheEnv:
         return False
 
     def _calculate_perplexity_reward(self):
-        # Use the model's perplexity on the current context as a reward signal
-        perplexity = self.llama_model.get_perplexity(self.current_context)
+        # Use the LLAMA class's calculate_perplexity method
+        input_tensor = torch.tensor([self.current_generated_tokens])
+        perplexity = self.llama_model.calculate_perplexity(input_tensor)
         return -perplexity  # Lower perplexity is better
 
     def _calculate_attention_reward(self):

@@ -15,14 +15,15 @@ def load_training_data(data_path):
     with open(data_path, 'r') as f:
         return json.load(f)
 
-def preprocess_training_data(training_data, vocab_size, max_seq_len):
+def preprocess_training_data(training_data, max_seq_len):
     preprocessed_data = []
     for sample in training_data:
-        # Ensure token indices are within the valid range
-        sample['tokens'] = [token for token in sample['tokens'] if 0 <= token < vocab_size]
-        # Truncate sequences that exceed max_seq_len
-        sample['tokens'] = sample['tokens'][:max_seq_len]
-        preprocessed_data.append(sample)
+        # Truncate prompts that exceed max_seq_len
+        truncated_prompt = sample['prompt'][:max_seq_len]
+        preprocessed_data.append({
+            'prompt': truncated_prompt,
+            'length': len(truncated_prompt.split())
+        })
     return preprocessed_data
 
 def generate_prompt(training_data):
@@ -33,7 +34,7 @@ def train(args):
     wandb.init(project="adaptive-kv-cache", config=args)
     visualizer = KVCacheVisualizer(wandb.run.name)
 
-    training_data = preprocess_training_data(load_training_data(args.training_data_path), args.vocab_size, args.max_seq_len)
+    training_data = preprocess_training_data(load_training_data(args.training_data_path), args.max_seq_len)
 
     with open("saved_models/tokenizer.pt", "rb") as f:
         tokenizer = pickle.load(f)

@@ -271,3 +271,27 @@ class LLAMA(nn.Module):
             logits = self.forward(input_ids, kv_cache=False)
         return logits.squeeze(0)
 
+    def calculate_perplexity(self, input_ids):
+        """
+        Calculates the perplexity for a given sequence of input IDs.
+        """
+        self.eval()
+        with torch.no_grad():
+            input_tensor = input_ids[:, :-1]
+            target_tensor = input_ids[:, 1:]
+
+            logits = self.forward(input_tensor, kv_cache=False)
+            log_probs = F.log_softmax(logits, dim=-1)
+
+            # Ensure target_tensor matches the dimensions of log_probs
+            target_tensor = target_tensor[:, :log_probs.size(1)]
+
+            # Perform gather operation
+            target_log_probs = log_probs.gather(2, target_tensor.unsqueeze(-1)).squeeze(-1)
+
+            # Compute perplexity
+            avg_log_prob = target_log_probs.mean().item()
+            perplexity = torch.exp(-avg_log_prob).item()
+
+        return perplexity
+
