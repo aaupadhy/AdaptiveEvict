@@ -2,6 +2,11 @@ import torch
 import json
 import argparse
 from solver import Solver
+import logging
+from tqdm import tqdm
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def generate_conversation_prompts(solver, num_prompts=1000, min_length=50, max_length=200):
     prompts = []
@@ -128,7 +133,9 @@ def generate_conversation_prompts(solver, num_prompts=1000, min_length=50, max_l
     "This raises important questions about model interpretability"
     ]
     
-    for _ in range(num_prompts):
+    logging.info(f"Starting to generate {num_prompts} conversation prompts.")
+
+    for _ in tqdm(range(num_prompts), desc="Generating prompts"):
         base_prompt = base_prompts[torch.randint(0, len(base_prompts), (1,)).item()]
         generated_text = solver.generate_text(
             input_text=base_prompt,
@@ -140,10 +147,14 @@ def generate_conversation_prompts(solver, num_prompts=1000, min_length=50, max_l
             "length": len(generated_text.split())
         })
         
+    logging.info("Finished generating conversation prompts.")
     return prompts
 
 def main(args):
+    logging.info("Initializing Solver with provided arguments.")
     solver = Solver(args)
+
+    logging.info("Starting prompt generation.")
     prompts = generate_conversation_prompts(
         solver,
         num_prompts=args.num_prompts,
@@ -151,12 +162,12 @@ def main(args):
         max_length=args.max_length
     )
     
-    # Open in write ("w") mode, not append ("a") mode to avoid redundant accumulation
+    logging.info(f"Saving generated prompts to {args.output_file}.")
     with open(args.output_file, 'w') as f:
         json.dump(prompts, f, indent=2)
     
-    print(f"Generated {len(prompts)} prompts and saved to {args.output_file}")
-    print(f"Average prompt length: {sum(p['length'] for p in prompts) / len(prompts):.2f} words")
+    logging.info(f"Generated {len(prompts)} prompts and saved to {args.output_file}.")
+    logging.info(f"Average prompt length: {sum(p['length'] for p in prompts) / len(prompts):.2f} words.")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

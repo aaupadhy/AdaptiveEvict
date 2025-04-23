@@ -3,6 +3,7 @@ import torch.nn.functional as F
 import numpy as np
 import wandb
 from kv_storage import KVCacheStorage
+from sklearn.metrics.pairwise import cosine_similarity
 
 class KVCacheEnv:
     def __init__(self, llama_model, max_primary_size, max_secondary_size, 
@@ -77,7 +78,20 @@ class KVCacheEnv:
         return state
 
     def _calculate_semantic_relevance(self, token_id, context_ids):
-        return np.random.rand()  # fake a random semantic relevance for now
+        # Get embeddings for the token and context
+        token_embedding = self.llama_model.get_token_embedding(token_id)
+        context_embeddings = [self.llama_model.get_token_embedding(cid) for cid in context_ids]
+
+        if not context_embeddings:
+            return 0.0  # No context, no relevance
+
+        # Calculate the average context embedding
+        avg_context_embedding = np.mean(context_embeddings, axis=0)
+
+        # Compute cosine similarity between token embedding and average context embedding
+        similarity = cosine_similarity([token_embedding], [avg_context_embedding])[0][0]
+
+        return similarity
 
     def _check_cache_miss(self, token_id):
         self.total_requests += 1
