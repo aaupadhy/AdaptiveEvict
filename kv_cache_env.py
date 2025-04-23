@@ -87,15 +87,49 @@ class KVCacheEnv:
         return False
 
     def _calculate_perplexity_reward(self):
-        if len(self.current_generated_tokens) < 2:
-            return 0.0
-        return np.random.rand()  # fake perplexity reward for now
+        # Use the model's perplexity on the current context as a reward signal
+        perplexity = self.llama_model.get_perplexity(self.current_context)
+        return -perplexity  # Lower perplexity is better
 
     def _calculate_attention_reward(self):
-        return np.random.rand()  # fake attention reward for now
+        # Use the average attention score of retained tokens as a reward signal
+        attention_scores = self.llama_model.get_last_layer_attention()
+        avg_attention = attention_scores.mean().item()
+        return avg_attention  # Higher attention is better
 
     def _calculate_gradient_reward(self):
-        return np.random.rand()  # fake gradient reward for now
+        # Use the gradient norm of token embeddings as a reward signal
+        token_gradients = self.llama_model.get_token_gradients()
+        gradient_norm = token_gradients.norm().item() if token_gradients is not None else 0
+        return -gradient_norm  # Lower gradient norm is better
+
+    def calculate_reward(self):
+        # Calculate individual reward components
+        perplexity_reward = self._calculate_perplexity_reward() * self.perplexity_weight
+        attention_reward = self._calculate_attention_reward() * self.attention_weight
+        gradient_reward = self._calculate_gradient_reward() * self.gradient_weight
+
+        # Calculate cost and cache miss penalties
+        cost_reward = -self.current_cost * self.lambda_cost
+        cache_miss_reward = -self.cache_miss_rate * self.cache_miss_penalty
+
+        # Combine all components into a single reward
+        total_reward = (
+            perplexity_reward +
+            attention_reward +
+            gradient_reward +
+            cost_reward +
+            cache_miss_reward
+        )
+
+        # Log reward components for debugging
+        self.reward_history['perplexity'].append(perplexity_reward)
+        self.reward_history['attention'].append(attention_reward)
+        self.reward_history['gradient'].append(gradient_reward)
+        self.reward_history['cost'].append(cost_reward)
+        self.reward_history['cache_miss'].append(cache_miss_reward)
+
+        return total_reward
 
     def step(self, action):
         self.current_step += 1
@@ -116,8 +150,11 @@ class KVCacheEnv:
         secondary_size = len(self.storage.secondary_cache['keys'])
 
         cost = (primary_size / self.storage.max_primary_size) * self.lambda_cost
-        cost_reward = -cost
-        self.reward_history['cost'].append(cost_reward)
+        self.current_cost = cost
+        cache_miss_rate = self.cache_misses / max(1, self.total_requests)
+        self.cache_miss_rate = cache_miss_rate
+
+        reward = self.calculate_reward()
 
         semantic_relevance = 0.0
         if self.storage.primary_cache['keys']:
@@ -126,21 +163,6 @@ class KVCacheEnv:
             semantic_relevance = self._calculate_semantic_relevance(current_token, context_tokens)
             self.semantic_scores.append(semantic_relevance)
             self.reward_history['semantic'].append(semantic_relevance)
-
-        cache_miss_rate = self.cache_misses / max(1, self.total_requests)
-        cache_miss_reward = -cache_miss_rate * self.cache_miss_penalty
-        self.reward_history['cache_miss'].append(cache_miss_reward)
-
-        perplexity_reward = self._calculate_perplexity_reward()
-        attention_reward = self._calculate_attention_reward()
-        gradient_reward = self._calculate_gradient_reward()
-
-        reward = cost_reward
-        reward += semantic_relevance * self.semantic_weight
-        reward += cache_miss_reward
-        reward += perplexity_reward * self.perplexity_weight
-        reward += attention_reward * self.attention_weight
-        reward += gradient_reward * self.gradient_weight
 
         if not eviction_success or not retrieval_success:
             reward -= 1.0
@@ -152,12 +174,12 @@ class KVCacheEnv:
         wandb.log({
             'step': self.current_step,
             'total_reward': reward,
-            'cost_reward': cost_reward,
+            'cost_reward': self.reward_history['cost'][-1],
             'semantic_reward': semantic_relevance * self.semantic_weight,
-            'cache_miss_reward': cache_miss_reward,
-            'perplexity_reward': perplexity_reward * self.perplexity_weight,
-            'attention_reward': attention_reward * self.attention_weight,
-            'gradient_reward': gradient_reward * self.gradient_weight,
+            'cache_miss_reward': self.reward_history['cache_miss'][-1],
+            'perplexity_reward': self.reward_history['perplexity'][-1],
+            'attention_reward': self.reward_history['attention'][-1],
+            'gradient_reward': self.reward_history['gradient'][-1],
             'eviction_count': len(evict_indices),
             'retrieval_count': len(retrieve_indices),
             'primary_cache_utilization': primary_size / self.storage.max_primary_size,
