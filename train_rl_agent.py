@@ -15,6 +15,16 @@ def load_training_data(data_path):
     with open(data_path, 'r') as f:
         return json.load(f)
 
+def preprocess_training_data(training_data, vocab_size, max_seq_len):
+    preprocessed_data = []
+    for sample in training_data:
+        # Ensure token indices are within the valid range
+        sample['tokens'] = [token for token in sample['tokens'] if 0 <= token < vocab_size]
+        # Truncate sequences that exceed max_seq_len
+        sample['tokens'] = sample['tokens'][:max_seq_len]
+        preprocessed_data.append(sample)
+    return preprocessed_data
+
 def generate_prompt(training_data):
     sample = random.choice(training_data)
     return sample['prompt']
@@ -23,7 +33,7 @@ def train(args):
     wandb.init(project="adaptive-kv-cache", config=args)
     visualizer = KVCacheVisualizer(wandb.run.name)
 
-    training_data = load_training_data(args.training_data_path)
+    training_data = preprocess_training_data(load_training_data(args.training_data_path), args.vocab_size, args.max_seq_len)
 
     with open("saved_models/tokenizer.pt", "rb") as f:
         tokenizer = pickle.load(f)
@@ -44,8 +54,10 @@ def train(args):
 
     if os.path.exists("saved_models/llama.pt"):
         state_dict = torch.load("saved_models/llama.pt")
-        missing, unexpected = llama_model.load_state_dict(state_dict, strict=False)
-        print(f"Loaded llama.pt with missing keys: {missing}, unexpected keys: {unexpected}")
+        # Filter out mismatched keys
+        filtered_state_dict = {k: v for k, v in state_dict.items() if k in llama_model.state_dict() and llama_model.state_dict()[k].shape == v.shape}
+        llama_model.load_state_dict(filtered_state_dict, strict=False)
+        print(f"Loaded llama.pt with filtered keys: {len(filtered_state_dict)} keys loaded.")
     else:
         print("Warning: llama.pt not found! Model initialized randomly.")
 

@@ -41,3 +41,6 @@ class BytePairTokenizer:
 
     def display_info(self):
         print(f"Vocab size: {self.n_tokens}")
+
+    def display_vocab_size(self):
+        print(f"Vocabulary size: {self.n_tokens}")
