@@ -162,4 +162,5 @@ wandb/
 monitoring/
 saved_models/
 data/
-.out
+*.out
+old_logs
