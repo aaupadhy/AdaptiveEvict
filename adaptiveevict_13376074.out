@@ -1,0 +1,63 @@
+Job started at Sun Apr 20 12:30:33 CDT 2025
+Running on g033.grace.hprc.tamu.edu
+Sun Apr 20 12:30:33 2025       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.230.02             Driver Version: 535.230.02   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  | 00000000:3B:00.0 Off |                  Off |
+| N/A   19C    P0              30W / 250W |      0MiB / 40960MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
+Generating RL training data...
+INFO:get_data:Preparing dataset.
+INFO:get_data:Loading dataset from Hugging Face...
+INFO:get_data:Selecting 100000 documents from the dataset
+INFO:get_data:Selected 100000 documents
+INFO:get_data:Processing dataset...
+INFO:datasets_modules.datasets.allenai--peS2o.ec8083364779e2c9ddb5f8b9c57210835b0c10f70093da8d531994aa0e5285ee.peS2o:generating examples from = https://huggingface.co/datasets/allenai/peS2o/resolve/636a503e44a3ca1b58e01fb61eab0825cd574de0/data/v2/train-00000-of-00020.json.gz
+INFO:get_data:Data preparation complete.
+INFO:get_data:Using data from data/train.txt
+Vocab size: 6969
+Traceback (most recent call last):
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/generate_rl_data.py", line 65, in <module>
+    main(args)
+    ~~~~^^^^^^
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/generate_rl_data.py", line 37, in main
+    solver = Solver(args)
+  File "/scratch/user/sarveshgs22/AdaptiveEvictLLMfScratch/solver.py", line 33, in __init__
+    batch_size = self.args.batch_size,
+                 ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Namespace' object has no attribute 'batch_size'
+Training RL agent...
+usage: train_rl_agent.py [-h] [--vocab_size VOCAB_SIZE]
+                         [--embed_dim EMBED_DIM] [--max_seq_len MAX_SEQ_LEN]
+                         [--n_layers N_LAYERS] [--n_heads N_HEADS]
+                         [--forward_mul FORWARD_MUL]
+                         [--max_primary_size MAX_PRIMARY_SIZE]
+                         [--max_secondary_size MAX_SECONDARY_SIZE]
+                         [--lambda_cost LAMBDA_COST]
+                         [--semantic_weight SEMANTIC_WEIGHT]
+                         [--cache_miss_penalty CACHE_MISS_PENALTY]
+                         [--perplexity_weight PERPLEXITY_WEIGHT]
+                         [--attention_weight ATTENTION_WEIGHT]
+                         [--gradient_weight GRADIENT_WEIGHT]
+                         [--hidden_dim HIDDEN_DIM] [--lr LR] [--gamma GAMMA]
+                         [--tau TAU] [--alpha ALPHA]
+                         [--num_episodes NUM_EPISODES] [--max_steps MAX_STEPS]
+                         [--batch_size BATCH_SIZE]
+                         [--save_interval SAVE_INTERVAL]
+                         --training_data_path TRAINING_DATA_PATH
+train_rl_agent.py: error: unrecognized arguments: --model_path ./saved_models --load_tokenizer --load_model
+Job finished at Sun Apr 20 12:34:14 CDT 2025

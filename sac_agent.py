@@ -49,6 +49,7 @@ class SACAgent:
         self.alpha = alpha
         
     def select_action(self, state, evaluate=False):
+        
         state = torch.FloatTensor(state).unsqueeze(0)
         if evaluate:
             with torch.no_grad():
@@ -56,7 +57,8 @@ class SACAgent:
         else:
             action = self.actor(state)
             action += torch.randn_like(action) * 0.1
-        return action.squeeze(0).cpu().numpy()
+        return action.squeeze(0).detach().cpu().numpy()
+
     
     def update(self, state_batch, action_batch, reward_batch, next_state_batch, done_batch):
         state_batch = torch.FloatTensor(state_batch)

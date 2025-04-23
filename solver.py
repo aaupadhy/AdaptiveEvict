@@ -147,4 +147,7 @@ class Solver(object):
         # Display final output
         generated_text = self.tokenizer.decode(x[0].tolist())            
         print(f'\n\nGenerated text for input text "{input_text}" is:\n{generated_text}\n\n')
+        
+        return generated_text
+
 
