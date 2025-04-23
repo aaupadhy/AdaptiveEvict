@@ -10,8 +10,14 @@ import json
 import pickle
 import random
 import os  # <-- tiny addition
+import logging
+from tqdm import tqdm
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def load_training_data(data_path):
+    logging.info(f"Loading training data from {data_path}")
     with open(data_path, 'r') as f:
         return json.load(f)
 
@@ -31,17 +37,21 @@ def generate_prompt(training_data):
     return sample['prompt']
 
 def train(args):
+    logging.info("Starting training process")
     wandb.init(project="adaptive-kv-cache", config=args)
     visualizer = KVCacheVisualizer(wandb.run.name)
 
+    logging.info("Preprocessing training data")
     training_data = preprocess_training_data(load_training_data(args.training_data_path), args.max_seq_len)
 
+    logging.info("Loading tokenizer")
     with open("saved_models/tokenizer.pt", "rb") as f:
         tokenizer = pickle.load(f)
 
     if args.vocab_size is None:
         args.vocab_size = tokenizer.n_tokens
 
+    logging.info("Initializing LLAMA model")
     llama_model = LLAMA(
         vocab_size=args.vocab_size,
         embed_dim=args.embed_dim,
@@ -54,17 +64,19 @@ def train(args):
     )
 
     if os.path.exists("saved_models/llama.pt"):
+        logging.info("Loading saved LLAMA model state")
         state_dict = torch.load("saved_models/llama.pt")
         # Filter out mismatched keys
         filtered_state_dict = {k: v for k, v in state_dict.items() if k in llama_model.state_dict() and llama_model.state_dict()[k].shape == v.shape}
         llama_model.load_state_dict(filtered_state_dict, strict=False)
-        print(f"Loaded llama.pt with filtered keys: {len(filtered_state_dict)} keys loaded.")
+        logging.info(f"Loaded llama.pt with filtered keys: {len(filtered_state_dict)} keys loaded.")
     else:
-        print("Warning: llama.pt not found! Model initialized randomly.")
+        logging.warning("llama.pt not found! Model initialized randomly.")
 
     llama_model.eval()
     llama_model.tokenizer = tokenizer
 
+    logging.info("Initializing KVCache environment")
     env = KVCacheEnv(
         llama_model=llama_model,
         max_primary_size=args.max_primary_size,
@@ -77,6 +89,7 @@ def train(args):
         gradient_weight=args.gradient_weight
     )
 
+    logging.info("Initializing SAC agent")
     agent = SACAgent(
         state_dim=env.get_state_space(),
         action_dim=env.get_action_space(),
@@ -90,7 +103,8 @@ def train(args):
     state_buffer, action_buffer, reward_buffer = [], [], []
     next_state_buffer, done_buffer = [], []
 
-    for episode in range(args.num_episodes):
+    for episode in tqdm(range(args.num_episodes), desc="Training Episodes"):
+        logging.info(f"Starting episode {episode+1}")
         prompt = generate_prompt(training_data)
         state = env.reset(prompt=prompt)
         episode_reward = 0
@@ -121,6 +135,7 @@ def train(args):
                 reward_buffer, next_state_buffer, done_buffer = [], [], []
 
             if done:
+                logging.info(f"Episode {episode+1} finished after {step+1} steps with reward {episode_reward:.2f}")
                 break
 
             state = next_state
@@ -138,10 +153,11 @@ def train(args):
             'prompt': prompt
         })
         
-        print(f"Episode {episode+1} | Total Reward: {episode_reward:.2f} | Steps: {step+1}")
+        print(f"Episode {episode+1} | Total Reward: {episode_reward:.2f} | Steps: {step+1}", flush=True)
         
 
         if (episode + 1) % args.save_interval == 0:
+            logging.info(f"Saving SAC agent model at episode {episode+1}")
             torch.save({
                 'actor_state_dict': agent.actor.state_dict(),
                 'critic1_state_dict': agent.critic1.state_dict(),

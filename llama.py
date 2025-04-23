@@ -290,7 +290,7 @@ class LLAMA(nn.Module):
             target_log_probs = log_probs.gather(2, target_tensor.unsqueeze(-1)).squeeze(-1)
 
             # Compute perplexity
-            avg_log_prob = target_log_probs.mean().item()
+            avg_log_prob = target_log_probs.mean()
             perplexity = torch.exp(-avg_log_prob).item()
 
         return perplexity
