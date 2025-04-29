@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:1
 #SBATCH --mem=60G
 #SBATCH --time=15:00:00
 
@@ -13,12 +13,12 @@ module load WebProxy
 export http_proxy=http://10.73.132.63:8080
 export https_proxy=http://10.73.132.63:8080
 
-PROJECT_DIR="/scratch/user/ajayjagan2511/AdaptiveEvictLLMfScratch/"
+PROJECT_DIR="/scratch/user/aaupadhy/college/projects/AdaptiveEvictLLMfScratch"
 cd $PROJECT_DIR
 export PYTHONPATH="${PROJECT_DIR}:${PYTHONPATH}"
 
 source ~/.bashrc
-conda activate ISR
+conda activate ML
 
 echo "Job started at $(date)"
 echo "Running on $(hostname -s).grace.hprc.tamu.edu"
@@ -27,10 +27,10 @@ nvidia-smi
 
 echo "Training RL agent..."
 python train_rl_agent.py \
-    --training_data_path data/rl_training_tiny.json \
+    --training_data_path data/rl_training_data.json \
     --vocab_size 22369 \
     --embed_dim 256 \
-    --max_seq_len 256 \
+    --max_seq_len 128 \
     --n_layers 8 \
     --n_heads 8 \
     --forward_mul 4 \
@@ -47,9 +47,10 @@ python train_rl_agent.py \
     --gamma 0.99 \
     --tau 0.005 \
     --alpha 0.2 \
-    --num_episodes 1000 \
-    --max_steps 1000 \
-    --batch_size 64 \
-    --save_interval 100
+    --num_episodes 50 \
+    --max_steps 50 \
+    --turn_length 10 \
+    --batch_size 32 \
+    --save_interval 10
 
 echo "Job finished at $(date)"

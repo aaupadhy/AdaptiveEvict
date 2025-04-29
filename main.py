@@ -4,12 +4,13 @@ import argparse
 import datetime
 from solver import Solver
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def main(args):
     # Create required directories if they don't exist
     os.makedirs(args.model_path,  exist_ok=True)
 
-    solver = Solver(args)
+    solver = Solver(args, device)
     if not args.test_only:
         solver.train()                                                                  # Training function
     else:

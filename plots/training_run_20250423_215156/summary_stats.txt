@@ -1,0 +1,203 @@
+Episode 0 Summary:
+episode: 0
+avg_reward: 0.5155431208848953
+avg_cost: 0.04604785156250001
+avg_semantic_relevance: 0.20312307128906248
+avg_cache_miss_rate: 0.0
+
+Episode 1 Summary:
+episode: 1
+avg_reward: 0.537504345703125
+avg_cost: 0.045826171875
+avg_semantic_relevance: 0.24911821289062497
+avg_cache_miss_rate: 0.0
+
+Episode 2 Summary:
+episode: 2
+avg_reward: 0.5880744140625
+avg_cost: 0.04706250000000001
+avg_semantic_relevance: 0.29981191406249996
+avg_cache_miss_rate: 0.0
+
+Episode 3 Summary:
+episode: 3
+avg_reward: 0.588176123046875
+avg_cost: 0.046738281250000006
+avg_semantic_relevance: 0.29988120117187494
+avg_cache_miss_rate: 0.0
+
+Episode 4 Summary:
+episode: 4
+avg_reward: 0.58816376953125
+avg_cost: 0.046930664062499995
+avg_semantic_relevance: 0.2998880859375
+avg_cache_miss_rate: 0.0
+
+Episode 5 Summary:
+episode: 5
+avg_reward: 0.58815400390625
+avg_cost: 0.047171875
+avg_semantic_relevance: 0.29990244140624994
+avg_cache_miss_rate: 0.0
+
+Episode 6 Summary:
+episode: 6
+avg_reward: 0.5881775390624999
+avg_cost: 0.04698925781249999
+avg_semantic_relevance: 0.29990771484374995
+avg_cache_miss_rate: 0.0
+
+Episode 7 Summary:
+episode: 7
+avg_reward: 0.5883056640625
+avg_cost: 0.046358398437500004
+avg_semantic_relevance: 0.2999727539062499
+avg_cache_miss_rate: 0.0
+
+Episode 8 Summary:
+episode: 8
+avg_reward: 0.588036376953125
+avg_cost: 0.04730078124999999
+avg_semantic_relevance: 0.299797705078125
+avg_cache_miss_rate: 0.0
+
+Episode 9 Summary:
+episode: 9
+avg_reward: 0.5881615234375
+avg_cost: 0.047061523437499996
+avg_semantic_relevance: 0.29989892578125
+avg_cache_miss_rate: 0.0
+
+Episode 10 Summary:
+episode: 10
+avg_reward: 0.588326220703125
+avg_cost: 0.046283203125
+avg_semantic_relevance: 0.299985791015625
+avg_cache_miss_rate: 0.0
+
+Episode 11 Summary:
+episode: 11
+avg_reward: 0.5881579101562501
+avg_cost: 0.04691308593750001
+avg_semantic_relevance: 0.29988046874999996
+avg_cache_miss_rate: 0.0
+
+Episode 12 Summary:
+episode: 12
+avg_reward: 0.5883420898437499
+avg_cost: 0.04601171874999999
+avg_semantic_relevance: 0.29997451171874995
+avg_cache_miss_rate: 0.0
+
+Episode 13 Summary:
+episode: 13
+avg_reward: 0.5882845703125
+avg_cost: 0.046317382812499995
+avg_semantic_relevance: 0.29994755859375
+avg_cache_miss_rate: 0.0
+
+Episode 14 Summary:
+episode: 14
+avg_reward: 0.5879726074218751
+avg_cost: 0.04741406250000001
+avg_semantic_relevance: 0.299745263671875
+avg_cache_miss_rate: 0.0
+
+Episode 15 Summary:
+episode: 15
+avg_reward: 0.588056103515625
+avg_cost: 0.04753710937500001
+avg_semantic_relevance: 0.299841064453125
+avg_cache_miss_rate: 0.0
+
+Episode 16 Summary:
+episode: 16
+avg_reward: 0.58814951171875
+avg_cost: 0.047111328125
+avg_semantic_relevance: 0.2998918945312499
+avg_cache_miss_rate: 0.0
+
+Episode 17 Summary:
+episode: 17
+avg_reward: 0.58820771484375
+avg_cost: 0.04673730468750001
+avg_semantic_relevance: 0.2999126953125
+avg_cache_miss_rate: 0.0
+
+Episode 18 Summary:
+episode: 18
+avg_reward: 0.588113623046875
+avg_cost: 0.04661621093749999
+avg_semantic_relevance: 0.29980649414062494
+avg_cache_miss_rate: 0.0
+
+Episode 19 Summary:
+episode: 19
+avg_reward: 0.5882322265625001
+avg_cost: 0.0464775390625
+avg_semantic_relevance: 0.29991123046874996
+avg_cache_miss_rate: 0.0
+
+Episode 20 Summary:
+episode: 20
+avg_reward: 0.58833515625
+avg_cost: 0.046174804687499994
+avg_semantic_relevance: 0.29998388671875
+avg_cache_miss_rate: 0.0
+
+Episode 21 Summary:
+episode: 21
+avg_reward: 0.5875604492187501
+avg_cost: 0.04861328125
+avg_semantic_relevance: 0.29945302734375
+avg_cache_miss_rate: 0.0
+
+Episode 22 Summary:
+episode: 22
+avg_reward: 0.58812158203125
+avg_cost: 0.0471943359375
+avg_semantic_relevance: 0.29987226562499997
+avg_cache_miss_rate: 0.0
+
+Episode 23 Summary:
+episode: 23
+avg_reward: 0.5881172363281251
+avg_cost: 0.0466240234375
+avg_semantic_relevance: 0.2998108886718749
+avg_cache_miss_rate: 0.0
+
+Episode 24 Summary:
+episode: 24
+avg_reward: 0.5880411132812502
+avg_cost: 0.047380859375
+avg_semantic_relevance: 0.29981044921875
+avg_cache_miss_rate: 0.0
+
+Episode 25 Summary:
+episode: 25
+avg_reward: 0.587727001953125
+avg_cost: 0.04834960937500001
+avg_semantic_relevance: 0.299593212890625
+avg_cache_miss_rate: 0.0
+
+Episode 26 Summary:
+episode: 26
+avg_reward: 0.588200732421875
+avg_cost: 0.046773437499999994
+avg_semantic_relevance: 0.299909326171875
+avg_cache_miss_rate: 0.0
+
+Episode 27 Summary:
+episode: 27
+avg_reward: 0.588348095703125
+avg_cost: 0.046070312499999995
+avg_semantic_relevance: 0.29998637695312497
+avg_cache_miss_rate: 0.0
+
+Episode 28 Summary:
+episode: 28
+avg_reward: 0.588094970703125
+avg_cost: 0.04688769531249999
+avg_semantic_relevance: 0.29981499023437497
+avg_cache_miss_rate: 0.0
+

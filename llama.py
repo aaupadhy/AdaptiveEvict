@@ -10,16 +10,14 @@ class TokenEmbedding(nn.Module):
         self.token_embedding = nn.Embedding(vocab_size, embed_dim)
 
     def forward(self, x):
-        return self.token_embedding(x)
+        return self.token_embedding(x).to(dtype=torch.float16)
 
 
 class RotatoryPositionEmbedding(nn.Module):
     def __init__(self, seq_len, embed_dim):
         super().__init__()
         self.embed_dim = embed_dim
-        x_sin, x_cos = self.build_rope(seq_len)
-        self.register_buffer("x_cos", x_cos)
-        self.register_buffer("x_sin", x_sin)
+        self.seq_len = seq_len
 
     def build_rope(self, seq_len):
         sequence = torch.arange(seq_len).float().unsqueeze(-1)
@@ -32,15 +30,20 @@ class RotatoryPositionEmbedding(nn.Module):
         return sin_values, cos_values
 
     def forward(self, x, token_loc=None):
+        seq_len = x.shape[1]
+        x_sin, x_cos = self.build_rope(seq_len)
+        x_sin = x_sin.to(x.device).to(dtype=torch.float16)
+        x_cos = x_cos.to(x.device).to(dtype=torch.float16)
+        
         if token_loc is None:
-            x1 = x * self.x_cos[:, :x.shape[1], :, :]
+            x1 = x * x_cos[:, :seq_len, :, :]
             x_shifted = torch.stack((-x[:, :, :, 1::2], x[:, :, :, ::2]), -1).reshape(x.shape)
-            x2 = x_shifted * self.x_sin[:, :x.shape[1], :, :]
+            x2 = x_shifted * x_sin[:, :seq_len, :, :]
             x = x1 + x2
         else:
-            x1 = x * self.x_cos[:, token_loc, :, :].unsqueeze(1)
+            x1 = x * x_cos[:, token_loc, :, :].unsqueeze(1)
             x_shifted = torch.stack((-x[:, :, :, 1::2], x[:, :, :, ::2]), -1).reshape(x.shape)
-            x2 = x_shifted * self.x_sin[:, token_loc, :, :].unsqueeze(1)
+            x2 = x_shifted * x_sin[:, token_loc, :, :].unsqueeze(1)
             x = x1 + x2
         return x
 
@@ -74,9 +77,9 @@ class MultiHeadSelfAttentionWithRope(nn.Module):
         if self.training or not kv_cache:
             b, s, e = x.shape
 
-            xq = self.queries(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim)
-            xk = self.keys(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim)
-            xv = self.values(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim)
+            xq = self.queries(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim).to(dtype=torch.float16)
+            xk = self.keys(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim).to(dtype=torch.float16)
+            xv = self.values(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim).to(dtype=torch.float16)
 
             xq = self.rotary_embedding(xq)
             xk = self.rotary_embedding(xk)
@@ -87,20 +90,24 @@ class MultiHeadSelfAttentionWithRope(nn.Module):
 
             xk = xk.permute(0, 1, 3, 2)
             x_attention = torch.matmul(xq, xk) / (self.head_embed_dim ** 0.5)
-            x_attention = x_attention.masked_fill(self.att_mask[:, :, :s, :s], -torch.inf)
+            if s <= self.max_seq_len:
+                mask = self.att_mask[:, :, :s, :s]
+            else:
+                mask = torch.triu(torch.ones(1, 1, s, s, dtype=torch.bool, device=x_attention.device), diagonal=1)
+            x_attention = x_attention.masked_fill(mask, -torch.inf)
             x_attention = torch.softmax(x_attention, dim=-1)
-
+            
             self.last_attention_scores = x_attention.detach()
 
             x = torch.matmul(x_attention, xv)
             x = x.permute(0, 2, 1, 3).reshape(b, s, e)
-            x = self.out_projection(x)
+            x = self.out_projection(x).to(dtype=torch.float16)
         else:
             b, s, e = x.shape
 
-            xq = self.queries(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim)
-            xk = self.keys(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim)
-            xv = self.values(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim)
+            xq = self.queries(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim).to(dtype=torch.float16)
+            xk = self.keys(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim).to(dtype=torch.float16)
+            xv = self.values(x).reshape(b, s, self.n_attention_heads, self.head_embed_dim).to(dtype=torch.float16)
 
             if self.cache['k'] is not None and self.cache['v'] is not None:
                 xk = torch.cat((self.cache['k'], xk), 1)
@@ -118,13 +125,18 @@ class MultiHeadSelfAttentionWithRope(nn.Module):
 
             xk_rotated_ = xk_rotated.permute(0, 1, 3, 2)
             x_attention = torch.matmul(xq_rotated, xk_rotated_) / (self.head_embed_dim ** 0.5)
+            if s <= self.max_seq_len:
+                mask = self.att_mask[:, :, :s, :s]
+            else:
+                mask = torch.triu(torch.ones(1, 1, s, s, dtype=torch.bool, device=x_attention.device), diagonal=1)
+            x_attention = x_attention.masked_fill(mask, -torch.inf)
             x_attention = torch.softmax(x_attention, dim=-1)
-
+            
             self.last_attention_scores = x_attention.detach()
 
             x = torch.matmul(x_attention, xv)
             x = x.permute(0, 2, 1, 3).reshape(b, s, e)
-            x = self.out_projection(x)
+            x = self.out_projection(x).to(dtype=torch.float16)
 
         return x
 
@@ -138,7 +150,7 @@ class RMSNorm(nn.Module):
         x_deno = torch.sqrt(x.pow(2).mean(-1, keepdims=True))
         x = x / (x_deno + 1e-6)
         x = x * self.weights
-        return x
+        return x.to(dtype=torch.float16)
 
 
 class SwiGLU(nn.Module):
@@ -149,7 +161,7 @@ class SwiGLU(nn.Module):
     def forward(self, x):
         x = self.fc(x)
         x = x * torch.sigmoid(x)
-        return x
+        return x.to(dtype=torch.float16)
 
 
 class FF(nn.Module):
@@ -162,7 +174,7 @@ class FF(nn.Module):
     def forward(self, x):
         x = self.act(x) * self.fc1(x)
         x = self.fc2(x)
-        return x
+        return x.to(dtype=torch.float16)
 
 
 class MoeFF(nn.Module):
@@ -192,7 +204,7 @@ class MoeFF(nn.Module):
 
         x = x * experts_weight
         x = x.sum(-2)
-        return x
+        return x.to(dtype=torch.float16)
 
 
 class Encoder(nn.Module):
@@ -208,7 +220,7 @@ class Encoder(nn.Module):
     def forward(self, x, token_loc=None, kv_cache=False):
         x = x + self.dropout1(self.attention(self.norm1(x), token_loc, kv_cache))
         x = x + self.dropout2(self.moe_ff(self.norm2(x), kv_cache))
-        return x
+        return x.to(dtype=torch.float16)
 
 
 class Classifier(nn.Module):
@@ -217,7 +229,7 @@ class Classifier(nn.Module):
         self.fc = nn.Linear(embed_dim, n_classes)
 
     def forward(self, x):
-        return self.fc(x)
+        return self.fc(x).to(dtype=torch.float16)
 
 
 class LLAMA(nn.Module):
@@ -248,9 +260,11 @@ class LLAMA(nn.Module):
                 x = block(x, token_loc, kv_cache=True)
             x = self.norm(x)
             x = self.classifier(x)
-        return x
+        return x.to(dtype=torch.float16)
 
     def get_last_layer_attention(self):
+        if self.encoder[-1].attention.last_attention_scores is None:
+            return torch.zeros(1)
         return self.encoder[-1].attention.last_attention_scores
 
     def get_token_gradients(self):

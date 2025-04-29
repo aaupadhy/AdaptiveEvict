@@ -1,4 +1,5 @@
-import wandb
+import torch
+import numpy as np
 
 class KVCacheStorage:
     def __init__(self, max_primary_size, max_secondary_size):
@@ -102,9 +103,3 @@ class KVCacheStorage:
                 'position_range': position_range(self.secondary_cache)
             }
         }
-
-    def log_metrics(self):
-        wandb.log({
-            "primary_cache_size": len(self.primary_cache['keys']),
-            "secondary_cache_size": len(self.secondary_cache['keys']),
-        })

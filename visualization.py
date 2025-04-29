@@ -1,7 +1,8 @@
-import wandb
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import os
+from datetime import datetime
 
 class KVCacheVisualizer:
     def __init__(self, run_name):
@@ -16,6 +17,8 @@ class KVCacheVisualizer:
             'eviction_count': [],
             'retrieval_count': []
         }
+        self.plot_dir = f"plots/{run_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        os.makedirs(self.plot_dir, exist_ok=True)
 
     def update_metrics(self, metrics):
         for key in self.metrics_history:
@@ -47,57 +50,43 @@ class KVCacheVisualizer:
         axes[1, 1].grid(True)
 
         plt.tight_layout()
-        wandb.log({"training_progress": wandb.Image(fig)})
+        plt.savefig(f"{self.plot_dir}/training_progress_episode_{episode}.png")
         plt.close()
 
     def plot_cache_state(self, primary_cache, secondary_cache):
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
-
-        if primary_cache['positions']:
-            ax1.scatter(primary_cache['positions'], primary_cache['attention_scores'], color='blue')
-        ax1.set_title('Primary Cache')
-        ax1.set_xlabel('Position')
-        ax1.set_ylabel('Attention')
-
-        if secondary_cache['positions']:
-            ax2.scatter(secondary_cache['positions'], secondary_cache['attention_scores'], color='red')
-        ax2.set_title('Secondary Cache')
-        ax2.set_xlabel('Position')
-        ax2.set_ylabel('Attention')
-
-        plt.tight_layout()
-        wandb.log({"cache_state": wandb.Image(fig)})
+        fig, ax = plt.subplots(figsize=(10, 6))
+        primary_utilization = len(primary_cache['keys']) / max(1, len(primary_cache['keys']))
+        secondary_utilization = len(secondary_cache['keys']) / max(1, len(secondary_cache['keys']))
+        ax.bar(['Primary Cache', 'Secondary Cache'], [primary_utilization, secondary_utilization])
+        ax.set_ylim(0, 1)
+        ax.set_ylabel('Utilization')
+        plt.title('Cache Utilization')
+        plt.savefig(f"{self.plot_dir}/cache_state.png")
         plt.close()
 
     def plot_reward_components(self, episode):
         fig, ax = plt.subplots(figsize=(10, 6))
-        x = np.arange(len(self.metrics_history['reward']))
-
-        if len(x) == 0:
-            return
-
-        semantic = np.array(self.metrics_history['semantic_relevance']) * 0.3
-        miss = -np.array(self.metrics_history['cache_miss_rate']) * 0.5
-        cost = -np.array(self.metrics_history['cost'])
-
-        ax.bar(x - 0.2, semantic, 0.2, label='Semantic')
-        ax.bar(x, miss, 0.2, label='Cache Miss Penalty')
-        ax.bar(x + 0.2, cost, 0.2, label='Cost Penalty')
-
+        ax.plot(self.metrics_history['reward'], label='Total Reward')
+        ax.plot(self.metrics_history['cost'], label='Cost')
+        ax.plot(self.metrics_history['semantic_relevance'], label='Semantic Relevance')
+        ax.plot(self.metrics_history['cache_miss_rate'], label='Cache Miss Rate')
         ax.legend()
         ax.grid(True)
-        plt.tight_layout()
-        wandb.log({"reward_components": wandb.Image(fig)})
+        plt.title(f'Reward Components - Episode {episode}')
+        plt.savefig(f"{self.plot_dir}/reward_components_episode_{episode}.png")
         plt.close()
 
     def log_summary_statistics(self, episode):
-        summary = {
-            "mean_reward": np.nanmean(self.metrics_history['reward'][-100:]),
-            "mean_semantic_relevance": np.nanmean(self.metrics_history['semantic_relevance'][-100:]),
-            "mean_cache_miss_rate": np.nanmean(self.metrics_history['cache_miss_rate'][-100:]),
-            "mean_primary_utilization": np.nanmean(self.metrics_history['primary_utilization'][-100:]),
-            "mean_secondary_utilization": np.nanmean(self.metrics_history['secondary_utilization'][-100:]),
-            "total_evictions": sum(self.metrics_history['eviction_count']),
-            "total_retrievals": sum(self.metrics_history['retrieval_count']),
+        stats = {
+            'episode': episode,
+            'avg_reward': np.mean(self.metrics_history['reward'][-100:]) if self.metrics_history['reward'] else 0,
+            'avg_cost': np.mean(self.metrics_history['cost'][-100:]) if self.metrics_history['cost'] else 0,
+            'avg_semantic_relevance': np.mean(self.metrics_history['semantic_relevance'][-100:]) if self.metrics_history['semantic_relevance'] else 0,
+            'avg_cache_miss_rate': np.mean(self.metrics_history['cache_miss_rate'][-100:]) if self.metrics_history['cache_miss_rate'] else 0
         }
-        wandb.log({"summary_statistics": summary})
+        
+        with open(f"{self.plot_dir}/summary_stats.txt", 'a') as f:
+            f.write(f"Episode {episode} Summary:\n")
+            for key, value in stats.items():
+                f.write(f"{key}: {value}\n")
+            f.write("\n")

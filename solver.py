@@ -12,8 +12,9 @@ from tokenizer import BytePairTokenizer
 
 
 class Solver(object):
-    def __init__(self, args):
+    def __init__(self, args, device):
         self.args = args
+        self.device = device
 
         # Download and preprocess dataset if no data file is provided.
         prepare_data(data_path=args.data_path, data_file=self.args.data_file)
@@ -46,11 +47,11 @@ class Solver(object):
                                     max_seq_len = self.args.train_tokens_len, 
                                     n_layers    = self.args.n_layers, 
                                     n_heads     = self.args.n_heads, 
-                                    forward_mul = self.args.forward_mul).cuda()
+                                    forward_mul = self.args.forward_mul).to(self.device)
 
         # Option to load the saved model.
         if self.args.load_model:
-            self.model.load_state_dict(torch.load(os.path.join(self.args.model_path, f"{self.args.network_type}.pt")))
+            self.model.load_state_dict(torch.load(os.path.join(self.args.model_path, f"{self.args.network_type}.pt"), map_location=self.device))
 
         # Training loss function
         self.loss_fn = nn.CrossEntropyLoss()
@@ -74,7 +75,7 @@ class Solver(object):
         for epoch in range(self.args.epochs):
             self.model.train()
             for i, (x, y) in enumerate(self.train_loader):
-                x, y = x.cuda(), y.cuda()
+                x, y = x.to(self.device), y.to(self.device)
 
                 logits = self.model(x)
                 logits = logits.view(-1, logits.size(-1))
@@ -112,7 +113,7 @@ class Solver(object):
         tokens_idx = self.tokenizer.encode(input_text)
 
         # Convert to tensor
-        x = torch.LongTensor(tokens_idx).unsqueeze(0).cuda()
+        x = torch.LongTensor(tokens_idx).unsqueeze(0).to(self.device)
 
         # Generate till we reach generated token length
         while len(x[0]) <= n_tokens_to_generate:
