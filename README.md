@@ -45,8 +45,8 @@ where the first term encourages predictive accuracy and the second penalizes cos
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/aaupadhy/AdaptiveEvictLLMfScratch.git
-   cd AdaptiveEvictLLMfScratch
+   git clone https://github.com/aaupadhy/AdaptiveEvict.git
+   cd AdaptiveEvict
    ```
 
 2. **Install dependencies**
